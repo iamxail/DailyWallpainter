@@ -211,6 +211,18 @@ namespace DailyWallpainter
             }
         }
 
+        public string LastestVersionInformed
+        {
+            get
+            {
+                return Get("LastestVersionInformed");
+            }
+            set
+            {
+                Set("LastestVersionInformed", value);
+            }
+        }
+
         /*public int DaysToSave
         {
             get
