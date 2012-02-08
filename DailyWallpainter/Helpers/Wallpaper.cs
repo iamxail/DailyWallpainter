@@ -6,7 +6,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace DailyWallpainter
+namespace DailyWallpainter.Helpers
 {
     public static class Wallpaper
     {
