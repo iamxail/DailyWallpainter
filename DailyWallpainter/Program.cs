@@ -32,16 +32,6 @@ namespace DailyWallpainter
                 return;
             }
 
-            bool StartByWindows = false;
-            foreach (var arg in Environment.GetCommandLineArgs())
-            {
-                if (StartByWindows == false
-                    && arg.ToLower() == "/winstart")
-                {
-                    StartByWindows = true;
-                }
-            }
-
             var updateChecker = new GitHubUpdateChecker("iamxail", "DailyWallpainter", "DailyWallpainter.exe");
             IsNewVersionAvailable = updateChecker.IsNewVersionAvailable();
             LatestVersion = updateChecker.LatestVersion;
@@ -54,9 +44,7 @@ namespace DailyWallpainter
 
             lastWorking = s.IsCheckOnlyWhenStartup;
 
-            if (s.InitialStart
-                || StartByWindows == false
-                || (IsNewVersionAvailable && LatestVersion != s.LastestVersionInformed))
+            if (IsNeededToShowSettings())
             {
                 ShowSettings();
             }
@@ -74,6 +62,23 @@ namespace DailyWallpainter
             tray.Dispose();
             tmrDownload.Stop();
             stopTimer.Set();
+        }
+
+        private static bool IsNeededToShowSettings()
+        {
+            bool StartByWindows = false;
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                if (StartByWindows == false
+                    && arg.ToLower() == "/winstart")
+                {
+                    StartByWindows = true;
+                }
+            }
+
+            return s.InitialStart
+                || StartByWindows == false
+                || (IsNewVersionAvailable && LatestVersion != s.LastestVersionInformed);
         }
 
         public static bool IsNewVersionAvailable { get; private set; }
