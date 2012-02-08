@@ -7,6 +7,16 @@ using System.Reflection;
 
 namespace DailyWallpainter.UpdateChecker
 {
+    public class CheckCompletedEventArgs : EventArgs
+    {
+        public CheckCompletedEventArgs(object userState)
+        {
+            UserState = userState;
+        }
+
+        public object UserState { get; protected set; }
+    }
+
     public class GitHubUpdateChecker
     {
         public GitHubUpdateChecker(string username, string repoName, string filename)
@@ -14,12 +24,21 @@ namespace DailyWallpainter.UpdateChecker
             Username = username;
             RepositoryName = repoName;
             Filename = filename;
+
+            IsChecked = false;
+            IsNewVersionAvailable = false;
+            LatestVersion = GetMajorDotMinorVersion();
         }
 
         public string Username { get; protected set; }
         public string RepositoryName { get; protected set; }
         public string Filename { get; protected set; }
         public string LatestVersion { get; protected set; }
+        public bool IsNewVersionAvailable { get; protected set; }
+        public bool IsChecked { get; protected set; }
+
+        public delegate void CheckCompletedEventHandler(object sender, CheckCompletedEventArgs e);
+        public event CheckCompletedEventHandler CheckCompleted;
 
         private string GetMajorDotMinorVersion()
         {
@@ -28,18 +47,36 @@ namespace DailyWallpainter.UpdateChecker
             return ver.Major.ToString() + "." + ver.Minor.ToString();
         }
 
-        public bool IsNewVersionAvailable()
+        public void CheckAsync()
         {
-            using (var client = new WebClient())
+            CheckAsync(null);
+        }
+
+        public void CheckAsync(object userState)
+        {
+            var client = new WebClient();
+            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
+            client.DownloadStringAsync(new Uri("https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads"), new object[] { client, userState });
+        }
+
+        private void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            var client = (e.UserState as object[])[0] as WebClient;
+
+            try
             {
-                var downloads = client.DownloadString("https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads");
+                if (e.Error != null)
+                {
+                    throw e.Error;
+                }
+
+                var downloads = e.Result;
 
                 var regexSplitter = new Regex("}[ .\r\n]*?,[ .\r\n]*?{");
                 var downloadsSplitted = regexSplitter.Split(downloads);
 
                 var regexFilename = new Regex("\"name\" *?: *?\"" + Filename + "\"[ .\r\n]*[,}]", RegexOptions.IgnoreCase);
                 var nowVer = GetMajorDotMinorVersion();
-                var isNewVersion = false;
                 foreach (var download in downloadsSplitted)
                 {
                     if (regexFilename.IsMatch(download))
@@ -50,14 +87,39 @@ namespace DailyWallpainter.UpdateChecker
                         if (match.Success)
                         {
                             LatestVersion = match.Groups[1].Value;
-                            isNewVersion = (LatestVersion != nowVer);
+                            IsNewVersionAvailable = (LatestVersion != nowVer);
 
                             break;
                         }
                     }
                 }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                try
+                {
+                    if (client != null)
+                    {
+                        client.Dispose();
+                    }
+                }
+                catch
+                {
+                }
 
-                return isNewVersion;
+                IsChecked = true;
+                OnCheckCompleted((e.UserState as object[])[1]);
+            }
+        }
+
+        private void OnCheckCompleted(object userState)
+        {
+            if (CheckCompleted != null)
+            {
+                CheckCompleted(this, new CheckCompletedEventArgs(userState));
             }
         }
     }

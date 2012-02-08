@@ -43,8 +43,10 @@ namespace DailyWallpainter
             }
 
             var updateChecker = new GitHubUpdateChecker("iamxail", "DailyWallpainter", "DailyWallpainter.exe");
-            IsNewVersionAvailable = updateChecker.IsNewVersionAvailable();
-            LatestVersion = updateChecker.LatestVersion;
+            updateChecker.CheckCompleted += new GitHubUpdateChecker.CheckCompletedEventHandler(updateChecker_CheckCompleted);
+            updateChecker.CheckAsync(updateChecker);
+            IsNewVersionAvailable = false;
+            LatestVersion = string.Empty;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -74,6 +76,19 @@ namespace DailyWallpainter
             tray.Dispose();
             tmrDownload.Stop();
             stopTimer.Set();
+        }
+
+        private static void updateChecker_CheckCompleted(object sender, CheckCompletedEventArgs e)
+        {
+            var updateChecker = e.UserState as GitHubUpdateChecker;
+
+            LatestVersion = updateChecker.LatestVersion;
+            IsNewVersionAvailable = updateChecker.IsNewVersionAvailable;
+
+            if (IsNewVersionAvailable && LatestVersion != s.LastestVersionInformed)
+            {
+                ShowSettings();
+            }
         }
 
         public static bool IsNewVersionAvailable { get; private set; }
