@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\BitmapHelper.cs" />
+    <Compile Include="Helpers\ExtensionMethodHack.cs" />
     <Compile Include="Helpers\SingleInstanceProgram.cs" />
     <Compile Include="UI\frmEditSource.cs">
       <SubType>Form</SubType>

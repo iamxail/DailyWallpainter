@@ -106,48 +106,6 @@ namespace DailyWallpainter
             }
         }
 
-        private static void SaveBitmap(string prefix, byte[] data)
-        {
-            string safeBitmapFilename = prefix + " at " + string.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            foreach (var c in Path.GetInvalidFileNameChars())
-            {
-                safeBitmapFilename.Replace(c, '_');
-            }
-
-            string ext = ".unknown";
-            if (data[0] == 0xFF && data[1] == 0xD8)
-            {
-                ext = ".jpg";
-            }
-            else if (data[0] == 137 && data[1] == 80 && data[2] == 78 && data[3] == 71)
-            {
-                ext = ".png";
-            }
-            else
-            {
-                string header = Encoding.ASCII.GetString(data, 0, 3);
-                if (header == "GIF")
-                {
-                    ext = ".gif";
-                }
-                else if (header.Substring(0, 2) == "BM")
-                {
-                    ext = ".bmp";
-                }
-            }
-
-            string path = Path.Combine(s.SaveFolder, safeBitmapFilename);
-            string suffix = "";
-            int i = 1;
-            while (File.Exists(path + suffix + ext))
-            {
-                i++;
-                suffix = " (" + i.ToString() + ")";
-            }
-
-            File.WriteAllBytes(path + suffix + ext, data);
-        }
-
         private static void tmrDownload_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Bitmap desktop = null;
@@ -171,44 +129,16 @@ namespace DailyWallpainter
 
                 foreach (var source in sources)
                 {
-                    var data = source.GetBitmap();
+                    var data = source.GetBitmapBytes();
                     if (data != null)
                     {
-                        if (Directory.Exists(s.SaveFolder) == false)
-                        {
-                            Directory.CreateDirectory(s.SaveFolder);
-                        }
+                        data.SaveBitmap(s.SaveFolder, source.Name);
 
-                        SaveBitmap(source.Name, data);
-
-                        desktop = new Bitmap(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
-                        appBg = new Bitmap(100, 165);
-
-                        using (var g = Graphics.FromImage(desktop))
-                        using (var ga = Graphics.FromImage(appBg))
                         using (var ms = new MemoryStream(data))
-                        using (var b = new Bitmap(ms))
+                        using (var bitmap = new Bitmap(ms))
                         {
-                            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-                            Rectangle rect;
-                            if ((float)desktop.Width / (float)desktop.Height > (float)b.Width / (float)b.Height)
-                            {
-                                int newHeight = (int)((float)b.Height / (float)b.Width * (float)desktop.Width);
-
-                                rect = new Rectangle(0, (desktop.Height - newHeight) / 2, desktop.Width, newHeight);
-                            }
-                            else
-                            {
-                                int newWidth = (int)((float)b.Width / (float)b.Height * (float)desktop.Height);
-
-                                rect = new Rectangle((desktop.Width - newWidth) / 2, 0, newWidth, desktop.Height);
-                            }
-
-                            g.DrawImage(b, rect);
-                            ga.DrawImageUnscaledAndClipped(b, new Rectangle(0, 0, 100, 165));
+                            desktop = bitmap.ResizeToFitOutside(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
+                            appBg = bitmap.Crop(0, 0, 100, 165);
                         }
 
                         s.Sources.Save();

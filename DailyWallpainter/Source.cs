@@ -74,27 +74,34 @@ namespace DailyWallpainter
             return name + "\r\n" + url + "\r\n" + regexpStr + "\t" + replacement + "\r\n" + enabled.ToString() + "\r\n" + lastBitmapUrl;
         }
 
-        public byte[] GetBitmap(bool onlyIfChanged = true)
+        public byte[] GetBitmapBytes(bool onlyIfChanged = true)
         {
             byte[] result = null;
 
-            using (WebClient client = new WebClient())
+            try
             {
-                string html = client.DownloadString(url);
-
-                var match = regexp.Match(html);
-                if (match.Success)
+                using (WebClient client = new WebClient())
                 {
-                    string bitmapUrl = match.Result(replacement);
+                    string html = client.DownloadString(url);
 
-                    if ((onlyIfChanged && lastBitmapUrl != bitmapUrl)
-                        || onlyIfChanged == false)
+                    var match = regexp.Match(html);
+                    if (match.Success)
                     {
-                        result = client.DownloadData(bitmapUrl);
+                        string bitmapUrl = match.Result(replacement);
 
-                        lastBitmapUrl = bitmapUrl;
+                        if ((onlyIfChanged && lastBitmapUrl != bitmapUrl)
+                            || onlyIfChanged == false)
+                        {
+                            result = client.DownloadData(bitmapUrl);
+
+                            lastBitmapUrl = bitmapUrl;
+                        }
                     }
                 }
+            }
+            catch
+            {
+                result = null;
             }
 
             return result;
