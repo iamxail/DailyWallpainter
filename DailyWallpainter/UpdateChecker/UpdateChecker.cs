@@ -30,34 +30,41 @@ namespace DailyWallpainter.UpdateChecker
 
         public bool IsNewVersionAvailable()
         {
-            using (var client = new WebClient())
+            try
             {
-                var downloads = client.DownloadString("https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads");
-
-                var regexSplitter = new Regex("}[ .\r\n]*?,[ .\r\n]*?{");
-                var downloadsSplitted = regexSplitter.Split(downloads);
-
-                var regexFilename = new Regex("\"name\" *?: *?\"" + Filename + "\"[ .\r\n]*[,}]", RegexOptions.IgnoreCase);
-                var nowVer = GetMajorDotMinorVersion();
-                var isNewVersion = false;
-                foreach (var download in downloadsSplitted)
+                using (var client = new WebClient())
                 {
-                    if (regexFilename.IsMatch(download))
+                    var downloads = client.DownloadString("https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads");
+
+                    var regexSplitter = new Regex("}[ .\r\n]*?,[ .\r\n]*?{");
+                    var downloadsSplitted = regexSplitter.Split(downloads);
+
+                    var regexFilename = new Regex("\"name\" *?: *?\"" + Filename + "\"[ .\r\n]*[,}]", RegexOptions.IgnoreCase);
+                    var nowVer = GetMajorDotMinorVersion();
+                    var isNewVersion = false;
+                    foreach (var download in downloadsSplitted)
                     {
-                        var regexDesc = new Regex("\"description\" *?: *?\"(?:version|ver|v) ?([0-9]*\\.[0-9]*)", RegexOptions.IgnoreCase);
-                        var match = regexDesc.Match(download);
-
-                        if (match.Success)
+                        if (regexFilename.IsMatch(download))
                         {
-                            LatestVersion = match.Groups[1].Value;
-                            isNewVersion = (LatestVersion != nowVer);
+                            var regexDesc = new Regex("\"description\" *?: *?\"(?:version|ver|v) ?([0-9]*\\.[0-9]*)", RegexOptions.IgnoreCase);
+                            var match = regexDesc.Match(download);
 
-                            break;
+                            if (match.Success)
+                            {
+                                LatestVersion = match.Groups[1].Value;
+                                isNewVersion = (LatestVersion != nowVer);
+
+                                break;
+                            }
                         }
                     }
-                }
 
-                return isNewVersion;
+                    return isNewVersion;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
     }
