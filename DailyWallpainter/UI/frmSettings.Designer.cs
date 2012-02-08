@@ -46,7 +46,8 @@
             this.picTitle = new System.Windows.Forms.PictureBox();
             this.chkStartup = new System.Windows.Forms.CheckBox();
             this.txtInterval = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.rdoCheckByInterval = new System.Windows.Forms.RadioButton();
+            this.rdoCheckOnlyStart = new System.Windows.Forms.RadioButton();
             this.mnuSources.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTitle)).BeginInit();
@@ -55,7 +56,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(44, 200);
+            this.label1.Location = new System.Drawing.Point(44, 197);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(231, 12);
             this.label1.TabIndex = 1;
@@ -63,12 +64,14 @@
             // 
             // lstSources
             // 
+            this.lstSources.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.lstSources.ContextMenuStrip = this.mnuSources;
             this.lstSources.FormattingEnabled = true;
             this.lstSources.IntegralHeight = false;
-            this.lstSources.Location = new System.Drawing.Point(58, 218);
+            this.lstSources.Location = new System.Drawing.Point(58, 215);
             this.lstSources.Name = "lstSources";
-            this.lstSources.Size = new System.Drawing.Size(480, 70);
+            this.lstSources.Size = new System.Drawing.Size(517, 70);
             this.lstSources.TabIndex = 2;
             this.lstSources.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lstSources_ItemCheck);
             // 
@@ -97,7 +100,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(44, 316);
+            this.label2.Location = new System.Drawing.Point(44, 307);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(246, 12);
             this.label2.TabIndex = 4;
@@ -106,7 +109,7 @@
             // lnkSaveFolder
             // 
             this.lnkSaveFolder.AutoSize = true;
-            this.lnkSaveFolder.Location = new System.Drawing.Point(56, 338);
+            this.lnkSaveFolder.Location = new System.Drawing.Point(56, 329);
             this.lnkSaveFolder.Name = "lnkSaveFolder";
             this.lnkSaveFolder.Size = new System.Drawing.Size(61, 12);
             this.lnkSaveFolder.TabIndex = 5;
@@ -116,7 +119,8 @@
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(401, 333);
+            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowse.Location = new System.Drawing.Point(438, 324);
             this.btnBrowse.Margin = new System.Windows.Forms.Padding(0);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(137, 22);
@@ -127,7 +131,8 @@
             // 
             // btnAddSource
             // 
-            this.btnAddSource.Location = new System.Drawing.Point(431, 291);
+            this.btnAddSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddSource.Location = new System.Drawing.Point(468, 288);
             this.btnAddSource.Margin = new System.Windows.Forms.Padding(0);
             this.btnAddSource.Name = "btnAddSource";
             this.btnAddSource.Size = new System.Drawing.Size(107, 22);
@@ -138,19 +143,21 @@
             // 
             // lnkTwitter
             // 
+            this.lnkTwitter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkTwitter.AutoSize = true;
-            this.lnkTwitter.Location = new System.Drawing.Point(480, 132);
+            this.lnkTwitter.Location = new System.Drawing.Point(517, 132);
             this.lnkTwitter.Name = "lnkTwitter";
             this.lnkTwitter.Size = new System.Drawing.Size(58, 12);
-            this.lnkTwitter.TabIndex = 11;
+            this.lnkTwitter.TabIndex = 12;
             this.lnkTwitter.TabStop = true;
             this.lnkTwitter.Text = "@iamxail";
             this.lnkTwitter.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkTwitter_LinkClicked);
             // 
             // btnClose
             // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(456, 11);
+            this.btnClose.Location = new System.Drawing.Point(493, 10);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(82, 24);
             this.btnClose.TabIndex = 0;
@@ -160,20 +167,24 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel1.Location = new System.Drawing.Point(0, 410);
+            this.panel1.Location = new System.Drawing.Point(0, 422);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(570, 1);
+            this.panel1.Size = new System.Drawing.Size(607, 1);
             this.panel1.TabIndex = 10;
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.SystemColors.Control;
             this.panel2.Controls.Add(this.btnClose);
-            this.panel2.Location = new System.Drawing.Point(0, 411);
+            this.panel2.Location = new System.Drawing.Point(0, 423);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(570, 100);
-            this.panel2.TabIndex = 9;
+            this.panel2.Size = new System.Drawing.Size(607, 100);
+            this.panel2.TabIndex = 11;
             // 
             // picTitle
             // 
@@ -199,30 +210,46 @@
             // 
             // txtInterval
             // 
-            this.txtInterval.Location = new System.Drawing.Point(46, 370);
+            this.txtInterval.Location = new System.Drawing.Point(65, 360);
             this.txtInterval.MaxLength = 3;
             this.txtInterval.Name = "txtInterval";
             this.txtInterval.Size = new System.Drawing.Size(31, 21);
             this.txtInterval.TabIndex = 8;
             this.txtInterval.Leave += new System.EventHandler(this.txtInterval_Leave);
             // 
-            // label3
+            // rdoCheckByInterval
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(78, 375);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(246, 12);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "분 마다 새 배경화면이 있는지 확인합니다(&I).";
+            this.rdoCheckByInterval.AutoSize = true;
+            this.rdoCheckByInterval.Checked = true;
+            this.rdoCheckByInterval.Location = new System.Drawing.Point(46, 363);
+            this.rdoCheckByInterval.Name = "rdoCheckByInterval";
+            this.rdoCheckByInterval.Size = new System.Drawing.Size(300, 16);
+            this.rdoCheckByInterval.TabIndex = 7;
+            this.rdoCheckByInterval.TabStop = true;
+            this.rdoCheckByInterval.Text = "         분 마다 새 배경화면이 있는지 확인합니다(&I).";
+            this.rdoCheckByInterval.UseVisualStyleBackColor = true;
+            this.rdoCheckByInterval.CheckedChanged += new System.EventHandler(this.rdoCheckByInterval_CheckedChanged);
+            // 
+            // rdoCheckOnlyStart
+            // 
+            this.rdoCheckOnlyStart.AutoSize = true;
+            this.rdoCheckOnlyStart.Location = new System.Drawing.Point(46, 385);
+            this.rdoCheckOnlyStart.Name = "rdoCheckOnlyStart";
+            this.rdoCheckOnlyStart.Size = new System.Drawing.Size(306, 16);
+            this.rdoCheckOnlyStart.TabIndex = 9;
+            this.rdoCheckOnlyStart.Text = "시작 시에만 새 배경화면을 확인하고 종료합니다(&O).";
+            this.rdoCheckOnlyStart.UseVisualStyleBackColor = true;
+            this.rdoCheckOnlyStart.CheckedChanged += new System.EventHandler(this.rdoCheckOnlyStart_CheckedChanged);
             // 
             // frmSettings
             // 
             this.AcceptButton = this.btnClose;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(559, 456);
-            this.Controls.Add(this.label3);
+            this.ClientSize = new System.Drawing.Size(596, 469);
             this.Controls.Add(this.txtInterval);
+            this.Controls.Add(this.rdoCheckOnlyStart);
+            this.Controls.Add(this.rdoCheckByInterval);
             this.Controls.Add(this.chkStartup);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -234,6 +261,7 @@
             this.Controls.Add(this.lstSources);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.picTitle);
+            this.Font = new System.Drawing.Font("Gulim", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -268,7 +296,8 @@
         private System.Windows.Forms.ToolStripMenuItem mitEditSource;
         private System.Windows.Forms.CheckBox chkStartup;
         private System.Windows.Forms.TextBox txtInterval;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RadioButton rdoCheckByInterval;
+        private System.Windows.Forms.RadioButton rdoCheckOnlyStart;
     }
 }
 

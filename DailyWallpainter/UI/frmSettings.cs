@@ -12,10 +12,14 @@ namespace DailyWallpainter.UI
 {
     public partial class frmSettings : Form
     {
-        Settings s = Settings.Instance;
+        private Settings s = Settings.Instance;
+        private bool refreshingSource = false;
+        private bool initialized;
 
         public frmSettings()
         {
+            initialized = false;
+
             InitializeComponent();
 
             if (Environment.OSVersion.Version.Major >= 6)
@@ -53,9 +57,12 @@ namespace DailyWallpainter.UI
             chkStartup.Checked = s.RunOnStartup;
 
             txtInterval.Text = s.IntervalInMinute.ToString();
+
+            rdoCheckOnlyStart.Checked = s.IsCheckOnlyWhenStartup;
+
+            initialized = true;
         }
 
-        private bool refreshingSource = false;
         private void RefreshSources()
         {
             refreshingSource = true;
@@ -235,6 +242,21 @@ namespace DailyWallpainter.UI
             else
             {
                 s.IntervalInMinute = result;
+            }
+        }
+
+        private void rdoCheckByInterval_CheckedChanged(object sender, EventArgs e)
+        {
+            txtInterval.Enabled = rdoCheckByInterval.Checked;
+        }
+
+        private void rdoCheckOnlyStart_CheckedChanged(object sender, EventArgs e)
+        {
+            s.IsCheckOnlyWhenStartup = rdoCheckOnlyStart.Checked;
+
+            if (initialized)
+            {
+                MessageBox.Show("이 설정은 다음 시작할 때부터 적용됩니다.", "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }
