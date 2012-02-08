@@ -1,47 +1,47 @@
-# Daily Wallpainter
+ï»¿# Daily Wallpainter
 
-¸ÅÀÏ¸ÅÀÏ »õ·Î¿î ¹è°æÈ­¸éÀ» º¸¿©ÁÖ´Â Daily WallpainterÀÔ´Ï´Ù.  
-Ã³À½ ½ÇÇàÇÏ½Ã¸é ´Ù¸¥ ¼³Á¤ ¾øÀÌµµ ¹Ù·Î ´ÙÀ½ »çÀÌÆ®¿¡¼­ ¹è°æÈ­¸éÀ» °¡Á®¿Ã ¼ö ÀÖ½À´Ï´Ù.
+ë§¤ì¼ë§¤ì¼ ìƒˆë¡œìš´ ë°°ê²½í™”ë©´ì„ ë³´ì—¬ì£¼ëŠ” Daily Wallpainterìž…ë‹ˆë‹¤.  
+ì²˜ìŒ ì‹¤í–‰í•˜ì‹œë©´ ë‹¤ë¥¸ ì„¤ì • ì—†ì´ë„ ë°”ë¡œ ë‹¤ìŒ ì‚¬ì´íŠ¸ì—ì„œ ë°°ê²½í™”ë©´ì„ ê°€ì ¸ì˜¬ ìˆ˜ ìžˆìŠµë‹ˆë‹¤.
 
 * National Geographics - Photo of the Day
 * NASA - Astronomy Picture of the Day
 
-## ÃÖ½Å ¹öÀü ´Ù¿î¹Þ±â
-> [¿©±â¸¦ Å¬¸¯ÇØ¼­ ´Ù¿î·Îµå](https://github.com/downloads/iamxail/DailyWallpainter/DailyWallpainter.exe)
+## ìµœì‹  ë²„ì „ ë‹¤ìš´ë°›ê¸°
+> [ì—¬ê¸°ë¥¼ í´ë¦­í•´ì„œ ë‹¤ìš´ë¡œë“œ](https://github.com/downloads/iamxail/DailyWallpainter/DailyWallpainter.exe)
 
-## ¾î¶»°Ô »ç¿ëÇÏ³ª¿ä?
-1. À§ ¸µÅ©¸¦ Å¬¸¯ÇØ¼­ ÇÁ·Î±×·¥À» ´Ù¿î¹Þ½À´Ï´Ù.
-2. ¿øÇÏ´Â ¾Æ¹« À§Ä¡¿¡ ¿Å°Ü³õ½À´Ï´Ù.
-3. ½ÇÇàÇØ¼­ ¿À·ù°¡ ³­´Ù¸é [´å³Ý ÇÁ·¹ÀÓ¿öÅ©¸¦ ´Ù¿î](http://www.microsoft.com/downloads/ko-kr/details.aspx?FamilyID=ab99342f-5d1a-413d-8319-81da479ab0d7)¹Þ¾Æ ¼³Ä¡ÇÕ´Ï´Ù.
-4. Àß ½ÇÇàµÇ¾ú´Ù¸é ¼³Á¤ Ã¢ÀÌ ³ª¿É´Ï´Ù.
-5. 'À©µµ ½ÃÀÛ ½Ã °°ÀÌ ½ÇÇàÇÕ´Ï´Ù'¸¦ Ã¼Å©ÇØÁÝ´Ï´Ù.
-6. '´Ý±â'¸¦ ´©¸£¸é Àá½Ã ÈÄ ¹è°æÈ­¸éÀÌ ¹Ù²ò´Ï´Ù.
-7. ÀÌÁ¦ ½Å°æ ²ü´Ï´Ù :)
+## ì–´ë–»ê²Œ ì‚¬ìš©í•˜ë‚˜ìš”?
+1. ìœ„ ë§í¬ë¥¼ í´ë¦­í•´ì„œ í”„ë¡œê·¸ëž¨ì„ ë‹¤ìš´ë°›ìŠµë‹ˆë‹¤.
+2. ì›í•˜ëŠ” ì•„ë¬´ ìœ„ì¹˜ì— ì˜®ê²¨ë†“ìŠµë‹ˆë‹¤.
+3. ì‹¤í–‰í•´ì„œ ì˜¤ë¥˜ê°€ ë‚œë‹¤ë©´ [ë‹·ë„· í”„ë ˆìž„ì›Œí¬ë¥¼ ë‹¤ìš´](http://www.microsoft.com/downloads/ko-kr/details.aspx?FamilyID=ab99342f-5d1a-413d-8319-81da479ab0d7)ë°›ì•„ ì„¤ì¹˜í•©ë‹ˆë‹¤.
+4. ìž˜ ì‹¤í–‰ë˜ì—ˆë‹¤ë©´ ì„¤ì • ì°½ì´ ë‚˜ì˜µë‹ˆë‹¤.
+5. 'ìœˆë„ ì‹œìž‘ ì‹œ ê°™ì´ ì‹¤í–‰í•©ë‹ˆë‹¤'ë¥¼ ì²´í¬í•´ì¤ë‹ˆë‹¤.
+6. 'ë‹«ê¸°'ë¥¼ ëˆ„ë¥´ë©´ ìž ì‹œ í›„ ë°°ê²½í™”ë©´ì´ ë°”ë€ë‹ˆë‹¤.
+7. ì´ì œ ì‹ ê²½ ë•ë‹ˆë‹¤ :)
 
-## »õ ¹öÀüÀ¸·Î ¾÷µ¥ÀÌÆ®°¡ ¾ÈµÇ¿ä!
-1. È­¸é ¿À¸¥ÂÊ ¾Æ·¡¿¡ Daily Wallpainter ¾ÆÀÌÄÜ(¿ÞÂÊ À§°¡ Á¢Èù Á¾ÀÌ ¸ð¾ç)ÀÌ ÀÖ´ÂÁö È®ÀÎÇÕ´Ï´Ù. (¾øÀ» °æ¿ì È­»ìÇ¥¸¦ ´­·¯¼­ ¼û°ÜÁø ¾ÆÀÌÄÜÀ» ´õ º¼ ¼ö ÀÖ½À´Ï´Ù.)
-2. ¾ÆÀÌÄÜ¿¡ ´ë°í ¸¶¿ì½º ¿À¸¥ÂÊ ¹öÆ°À» Å¬¸¯ÇØ¼­ ¸Þ´º¸¦ ¶ç¿ì°í 'Á¾·á'¸¦ ´©¸¨´Ï´Ù.
-3. ´Ù½Ã ÇÁ·Î±×·¥À» ´Ù¿î¹Þ¾Æ ½ÇÇàÇØ º¾´Ï´Ù.
+## ìƒˆ ë²„ì „ìœ¼ë¡œ ì—…ë°ì´íŠ¸ê°€ ì•ˆë˜ìš”!
+1. í™”ë©´ ì˜¤ë¥¸ìª½ ì•„ëž˜ì— Daily Wallpainter ì•„ì´ì½˜(ì™¼ìª½ ìœ„ê°€ ì ‘ížŒ ì¢…ì´ ëª¨ì–‘)ì´ ìžˆëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤. (ì—†ì„ ê²½ìš° í™”ì‚´í‘œë¥¼ ëˆŒëŸ¬ì„œ ìˆ¨ê²¨ì§„ ì•„ì´ì½˜ì„ ë” ë³¼ ìˆ˜ ìžˆìŠµë‹ˆë‹¤.)
+2. ì•„ì´ì½˜ì— ëŒ€ê³  ë§ˆìš°ìŠ¤ ì˜¤ë¥¸ìª½ ë²„íŠ¼ì„ í´ë¦­í•´ì„œ ë©”ë‰´ë¥¼ ë„ìš°ê³  'ì¢…ë£Œ'ë¥¼ ëˆ„ë¦…ë‹ˆë‹¤.
+3. ë‹¤ì‹œ í”„ë¡œê·¸ëž¨ì„ ë‹¤ìš´ë°›ì•„ ì‹¤í–‰í•´ ë´…ë‹ˆë‹¤.
 
-## ¹®Á¦°¡ ÀÖ¾î¿ä! / ÀÌ·± ±â´ÉÀ» ³Ö¾îÁÖ¼¼¿ä!
+## ë¬¸ì œê°€ ìžˆì–´ìš”! / ì´ëŸ° ê¸°ëŠ¥ì„ ë„£ì–´ì£¼ì„¸ìš”!
 > [Twitter @iamxail](http://twitter.com/iamxail) or Open an issue!
 
-## ÃÖ±Ù º¯°æ »çÇ×
+## ìµœê·¼ ë³€ê²½ ì‚¬í•­
 ### 1.3
-* ÀÚµ¿ ¾÷µ¥ÀÌÆ® ¾Ë¸² ±â´ÉÀÌ Ãß°¡µÇ¾ú½À´Ï´Ù.
+* ìžë™ ì—…ë°ì´íŠ¸ ì•Œë¦¼ ê¸°ëŠ¥ì´ ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.
 
-    »õ ¹öÀüÀÌ ¿Ã¶ó¿À¸é ÇÑ ¹ø Ã¢ÀÌ ¶°¼­ ¾Ë·ÁÁÖ°í ¼³Á¤ Ã¢¿¡¼­ »õ ¾÷µ¥ÀÌÆ®¸¦ ¹ÞÀ» ¸µÅ©¸¦ º¸¿©ÁÖ°Ô µË´Ï´Ù.
+    ìƒˆ ë²„ì „ì´ ì˜¬ë¼ì˜¤ë©´ í•œ ë²ˆ ì°½ì´ ë– ì„œ ì•Œë ¤ì£¼ê³  ì„¤ì • ì°½ì—ì„œ ìƒˆ ì—…ë°ì´íŠ¸ë¥¼ ë°›ì„ ë§í¬ë¥¼ ë³´ì—¬ì£¼ê²Œ ë©ë‹ˆë‹¤.
 ### 1.2
-* ½ÃÀÛ ½Ã¿¡¸¸ ¹è°æÈ­¸é È®ÀÎÇÏ°í Á¾·áÇÏ±â ¿É¼Ç Ãß°¡
+* ì‹œìž‘ ì‹œì—ë§Œ ë°°ê²½í™”ë©´ í™•ì¸í•˜ê³  ì¢…ë£Œí•˜ê¸° ì˜µì…˜ ì¶”ê°€
 
-    ÄÑÁú ¶§ ÇÑ ¹ø È®ÀÎÇÏ°í Á¾·áÇÏ¿© ½Ã½ºÅÛ ºÎÇÏ¸¦ ´ú¾îÁÝ´Ï´Ù
+    ì¼œì§ˆ ë•Œ í•œ ë²ˆ í™•ì¸í•˜ê³  ì¢…ë£Œí•˜ì—¬ ì‹œìŠ¤í…œ ë¶€í•˜ë¥¼ ëœì–´ì¤ë‹ˆë‹¤
 ### 1.1
-* NASA - Astronomy Picture of the Day ¼Ò½º Ãß°¡
-* ¼Ò½º Ãß°¡ Ã¢ ±â´É °³¼±
+* NASA - Astronomy Picture of the Day ì†ŒìŠ¤ ì¶”ê°€
+* ì†ŒìŠ¤ ì¶”ê°€ ì°½ ê¸°ëŠ¥ ê°œì„ 
 
 ### 1.0
-* Ã¹ °ø°³
+* ì²« ê³µê°œ
 
-## ÀúÀÛ±Ç
+## ì €ìž‘ê¶Œ
 Copyright (c) 2012, xail. All rights reserved.
-ÀÚ¼¼ÇÑ »çÇ×Àº LICENSE¸¦ È®ÀÎÇÏ¼¼¿ä.
+ìžì„¸í•œ ì‚¬í•­ì€ LICENSEë¥¼ í™•ì¸í•˜ì„¸ìš”.
