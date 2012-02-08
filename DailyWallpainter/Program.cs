@@ -44,6 +44,7 @@ namespace DailyWallpainter
             tmrDownload = new System.Timers.Timer();
             tmrDownload.Interval = 5000;
             tmrDownload.Elapsed += new System.Timers.ElapsedEventHandler(tmrDownload_Elapsed);
+            tmrDownload.Start();
 
             TrayIcon tray = new TrayIcon();
 

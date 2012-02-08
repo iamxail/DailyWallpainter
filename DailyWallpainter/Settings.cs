@@ -253,7 +253,7 @@ namespace DailyWallpainter
         {
             try
             {
-                using (var key = GetKey())
+                using (var key = GetKey(keyPath))
                 {
                     key.SetValue(name, value);
                 }
