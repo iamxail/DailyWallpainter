@@ -18,6 +18,7 @@ namespace DailyWallpainter
         private static ManualResetEvent passTimer;
         private static frmSettings set;
         private static Settings s = Settings.Instance;
+        private static bool lastWorking;
 
         /// <summary>
         /// The main entry point for the application.
@@ -30,13 +31,26 @@ namespace DailyWallpainter
                 return;
             }
 
+            bool StartByWindows = false;
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                if (StartByWindows == false
+                    && arg.ToLower() == "/winstart")
+                {
+                    StartByWindows = true;
+                }
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             stopTimer = new ManualResetEvent(false);
             passTimer = new ManualResetEvent(false);
 
-            if (s.InitialStart)
+            lastWorking = s.IsCheckOnlyWhenStartup;
+
+            if (s.InitialStart
+                || StartByWindows == false)
             {
                 ShowSettings();
             }
@@ -146,11 +160,6 @@ namespace DailyWallpainter
             }
             finally
             {
-                if (stopTimer.WaitOne(0) == false)
-                {
-                    tmrDownload.Start();
-                }
-
                 if (desktop != null)
                 {
                     desktop.Dispose();
@@ -159,6 +168,15 @@ namespace DailyWallpainter
                 if (appBg != null)
                 {
                     appBg.Dispose();
+                }
+
+                if (lastWorking)
+                {
+                    Application.Exit();
+                }
+                else if (stopTimer.WaitOne(0) == false)
+                {
+                    tmrDownload.Start();
                 }
             }
         }

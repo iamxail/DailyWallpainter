@@ -54,14 +54,23 @@ namespace DailyWallpainter
 
         private void SetInitialSettings(string settingsVersion)
         {
-            if (settingsVersion == "1.0.0.0")
+            switch (settingsVersion)
             {
-                Sources.ForceInitialize();
-                Set("IntervalInMinute", "360");
-            }
-            else
-            {
-                //do nothing
+                case "1.0.0.0":
+                    Sources.ForceInitialize();
+                    Set("IntervalInMinute", "360");
+                    goto case "1.1.0.0";
+
+                case "1.1.0.0":
+                    if (Get(startupKey, appName).ToLower() == Application.ExecutablePath.ToLower())
+                    {
+                        RunOnStartup = true;
+                    }
+                    break;
+
+                default:
+                    //do nothing
+                    break;
             }
 
             RunOnStartup = true;
@@ -92,7 +101,10 @@ namespace DailyWallpainter
         {
             get
             {
-                if (Get(startupKey, appName).ToString().ToLower() == Application.ExecutablePath.ToLower())
+                string startupValue = Get(startupKey, appName).ToLower();
+                string exePath = Application.ExecutablePath.ToLower();
+
+                if (startupValue == "\"" + exePath + "\" /winstart")
                 {
                     return true;
                 }
@@ -105,7 +117,7 @@ namespace DailyWallpainter
             {
                 if (value)
                 {
-                    Set(startupKey, appName, Application.ExecutablePath);
+                    Set(startupKey, appName, "\"" + Application.ExecutablePath + "\" /winstart");
                 }
                 else
                 {
@@ -173,6 +185,29 @@ namespace DailyWallpainter
             set
             {
                 Set("IntervalInMinute", value.ToString());
+            }
+        }
+
+        public bool IsCheckOnlyWhenStartup
+        {
+            get
+            {
+                string checkStartup = Get("IsCheckOnlyWhenStartup");
+                bool parsed;
+
+                if (checkStartup == ""
+                    || bool.TryParse(checkStartup, out parsed) == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    return parsed;
+                }
+            }
+            set
+            {
+                Set("IsCheckOnlyWhenStartup", value.ToString());
             }
         }
 
