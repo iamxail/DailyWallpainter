@@ -30,23 +30,39 @@ namespace DailyWallpainter
             string settingsVersion = Get("");
             string programVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+            sources = new SourcesCollection(Get("Sources"));
+
             if (settingsVersion != programVersion)
             {
                 initial = true;
                 Set("", programVersion);
 
-                if (settingsVersion == "1.0.0.0")
-                {
-                    Set("Sources", "");
-                    Set("IntervalInMinute", "360");
-                }
+                SetInitialSettings(settingsVersion);
             }
             else
             {
                 initial = false;
             }
+        }
 
-            sources = new SourcesCollection(Get("Sources"));
+        private void SetInitialSettings()
+        {
+            SetInitialSettings(string.Empty);
+        }
+
+        private void SetInitialSettings(string settingsVersion)
+        {
+            if (settingsVersion == "1.0.0.0")
+            {
+                sources.ForceInitialize();
+                Set("IntervalInMinute", "360");
+
+                SetInitialSettings();
+            }
+            else
+            {
+                RunOnStartup = true;
+            }
         }
 
         protected SourcesCollection sources;

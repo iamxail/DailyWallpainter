@@ -110,21 +110,60 @@ namespace DailyWallpainter
 
     public class SourcesCollection : IEnumerable<Source>
     {
-        protected List<Source> list = new List<Source>();
+        protected List<Source> list;
 
         internal SourcesCollection()
         {
-            // do nothing
+            if (list == null)
+            {
+                list = new List<Source>();
+            }
+
+            InitializeInternal();
         }
 
-        internal SourcesCollection(string from)
+        internal SourcesCollection(string from) : this()
         {
             list = new List<Source>(Source.GetSourcesFromString(from));
+        }
+
+        public void ForceInitialize()
+        {
+            list.Clear();
+            InitializeInternal();
+        }
+
+        private void InitializeInternal()
+        {
+            if (list.Count <= 0)
+            {
+                AddRange(new Source[] {
+                    new Source("National Geographic - Photo of the Day",
+                        @"http://photography.nationalgeographic.com/photography/photo-of-the-day/",
+                        "class=\"primary_photo\"(?>\\r\\n|[\\r\\n]|.)*?<div class=\"download_link\"><a href=\"(.*?)\"|title=\"Go to the previous Photo of the Day\">(?>\\r\\n|[\\r\\n]|.)*?<img src=\"(.*?)\"",
+                        "$1$2"),
+                    new Source("National Geographic - Photo of the Day (High Quality Only, Not Daily)",
+                        @"http://photography.nationalgeographic.com/photography/photo-of-the-day/",
+                        "<div class=\"download_link\"><a href=\"(.*?)\"",
+                        "$1",
+                        false, ""),
+                    new Source("NASA - Astronomy Picture of the Day",
+                        @"http://apod.nasa.gov/apod/",
+                        "<a href=\"image/(.*?)\">",
+                        "http://apod.nasa.gov/apod/image/$1")
+                    });
+            }
         }
 
         public void Add(Source source)
         {
             list.Add(source);
+            Save();
+        }
+
+        public void AddRange(IEnumerable<Source> sources)
+        {
+            list.AddRange(sources);
             Save();
         }
 
@@ -144,6 +183,12 @@ namespace DailyWallpainter
         public void RemoveAt(int index)
         {
             list.RemoveAt(index);
+            Save();
+        }
+
+        public void Clear()
+        {
+            list.Clear();
             Save();
         }
 

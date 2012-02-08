@@ -14,5 +14,10 @@ namespace DailyWallpainter.Helpers
         {
             return mutex.WaitOne(TimeSpan.Zero, true);
         }
+
+        public static void Release()
+        {
+            mutex.ReleaseMutex();
+        }
     }
 }

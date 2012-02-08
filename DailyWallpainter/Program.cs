@@ -37,34 +37,11 @@ namespace DailyWallpainter
             stopTimer = new ManualResetEvent(false);
             runningTimer = new ManualResetEvent(false);
             tmrDownload = new System.Timers.Timer();
-            tray = new TrayIcon();
-
-            // 
-            // tmrDownload
-            // 
             tmrDownload.Interval = 5000;
             tmrDownload.Elapsed += new System.Timers.ElapsedEventHandler(tmrDownload_Elapsed);
 
             if (s.InitialStart)
             {
-                s.RunOnStartup = true;
-
-                s.Sources.Add(new Source("National Geographic - Photo of the Day",
-                    @"http://photography.nationalgeographic.com/photography/photo-of-the-day/",
-                    "class=\"primary_photo\"(?>\\r\\n|[\\r\\n]|.)*?<div class=\"download_link\"><a href=\"(.*?)\"|title=\"Go to the previous Photo of the Day\">(?>\\r\\n|[\\r\\n]|.)*?<img src=\"(.*?)\"",
-                    "$1$2"));
-
-                s.Sources.Add(new Source("National Geographic - Photo of the Day (High Quality Only, Not Daily)",
-                    @"http://photography.nationalgeographic.com/photography/photo-of-the-day/",
-                    "<div class=\"download_link\"><a href=\"(.*?)\"",
-                    "$1",
-                    false, ""));
-
-                s.Sources.Add(new Source("NASA - Astronomy Picture of the Day",
-                    @"http://apod.nasa.gov/apod/",
-                    "<a href=\"image/(.*?)\">",
-                    "http://apod.nasa.gov/apod/image/$1"));
-
                 ShowSettings();
             }
             else
@@ -72,8 +49,11 @@ namespace DailyWallpainter
                 tmrDownload.Start();
             }
 
+            tray = new TrayIcon();
+
             Application.Run();
 
+            SingleInstanceProgram.Release();
             tray.Dispose();
             tmrDownload.Stop();
             stopTimer.Set();
