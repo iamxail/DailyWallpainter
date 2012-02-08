@@ -15,8 +15,7 @@ namespace DailyWallpainter
     {
         private static System.Timers.Timer tmrDownload;
         private static ManualResetEvent stopTimer;
-        private static ManualResetEvent runningTimer;
-        private static TrayIcon tray;
+        private static ManualResetEvent passTimer;
         private static frmSettings set;
         private static Settings s = Settings.Instance;
 
@@ -35,21 +34,18 @@ namespace DailyWallpainter
             Application.SetCompatibleTextRenderingDefault(false);
 
             stopTimer = new ManualResetEvent(false);
-            runningTimer = new ManualResetEvent(false);
-            tmrDownload = new System.Timers.Timer();
-            tmrDownload.Interval = 5000;
-            tmrDownload.Elapsed += new System.Timers.ElapsedEventHandler(tmrDownload_Elapsed);
+            passTimer = new ManualResetEvent(false);
 
             if (s.InitialStart)
             {
                 ShowSettings();
             }
-            else
-            {
-                tmrDownload.Start();
-            }
 
-            tray = new TrayIcon();
+            tmrDownload = new System.Timers.Timer();
+            tmrDownload.Interval = 5000;
+            tmrDownload.Elapsed += new System.Timers.ElapsedEventHandler(tmrDownload_Elapsed);
+
+            TrayIcon tray = new TrayIcon();
 
             Application.Run();
 
@@ -61,7 +57,7 @@ namespace DailyWallpainter
 
         public static void ShowSettings()
         {
-            tmrDownload.Stop();
+            passTimer.Set();
 
             if (set == null || set.IsDisposed)
             {
@@ -80,10 +76,7 @@ namespace DailyWallpainter
                 tmrDownload.Interval = s.IntervalInMinute * 60000;
             }
 
-            if (runningTimer.WaitOne(0) == false)
-            {
-                tmrDownload.Start();
-            }
+            passTimer.Reset();
         }
 
         private static void tmrDownload_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -91,7 +84,7 @@ namespace DailyWallpainter
             Bitmap desktop = null;
             Bitmap appBg = null;
 
-            if (runningTimer.WaitOne(0))
+            if (passTimer.WaitOne(0))
             {
                 return;
             }
@@ -99,7 +92,6 @@ namespace DailyWallpainter
             try
             {
                 tmrDownload.Stop();
-                runningTimer.Set();
                 if (tmrDownload.Interval != s.IntervalInMinute * 60000)
                 {
                     tmrDownload.Interval = s.IntervalInMinute * 60000;
@@ -153,8 +145,6 @@ namespace DailyWallpainter
             }
             finally
             {
-                runningTimer.Reset();
-
                 if (stopTimer.WaitOne(0) == false)
                 {
                     tmrDownload.Start();

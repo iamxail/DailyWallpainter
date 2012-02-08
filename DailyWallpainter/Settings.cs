@@ -25,12 +25,19 @@ namespace DailyWallpainter
             }
         }
 
+        private const string appName = @"Daily Wallpainter";
+        private readonly string appKey = @"Software\xail\" + appName;
+        private const string startupKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private readonly string DefaultSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), appName);
+        private readonly int DefaultIntervalInMinute = 360;
+
+        protected SourcesCollection sources;
+        protected bool initial;
+
         public Settings()
         {
             string settingsVersion = Get("");
             string programVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            sources = new SourcesCollection(Get("Sources"));
 
             if (settingsVersion != programVersion)
             {
@@ -45,33 +52,30 @@ namespace DailyWallpainter
             }
         }
 
-        private void SetInitialSettings()
-        {
-            SetInitialSettings(string.Empty);
-        }
-
         private void SetInitialSettings(string settingsVersion)
         {
             if (settingsVersion == "1.0.0.0")
             {
-                sources.ForceInitialize();
+                Sources.ForceInitialize();
                 Set("IntervalInMinute", "360");
-
-                SetInitialSettings();
             }
             else
             {
-                RunOnStartup = true;
+                //do nothing
             }
-        }
 
-        protected SourcesCollection sources;
-        protected bool initial;
+            RunOnStartup = true;
+        }
 
         public SourcesCollection Sources
         {
             get
             {
+                if (sources == null)
+                {
+                    sources = new SourcesCollection(Get("Sources"));
+                }
+
                 return sources;
             }
         }
@@ -88,33 +92,33 @@ namespace DailyWallpainter
         {
             get
             {
-                try
+                if (Get(startupKey, appName).ToString().ToLower() == Application.ExecutablePath.ToLower())
                 {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
-                    {
-                        if (key.GetValue("Daily Wallpainter", "").ToString().ToLower() == Application.ExecutablePath.ToLower())
-                        {
-                            return true;
-                        }
-                    }
+                    return true;
                 }
-                catch (Exception)
+                else
                 {
+                    return false;
                 }
-
-                return false;
             }
             set
             {
-                try
+                if (value)
                 {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
-                    {
-                        key.SetValue("Daily Wallpainter", Application.ExecutablePath);
-                    }
+                    Set(startupKey, appName, Application.ExecutablePath);
                 }
-                catch (Exception)
+                else
                 {
+                    try
+                    {
+                        using (var key = GetKey(startupKey))
+                        {
+                            key.DeleteValue(appName);
+                        }
+                    }
+                    catch
+                    {
+                    }
                 }
             }
         }
@@ -130,7 +134,7 @@ namespace DailyWallpainter
                 }
                 else
                 {
-                    folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Daily Wallpainter");
+                    folder = DefaultSaveFolder;
 
                     SaveFolder = folder;
 
@@ -153,13 +157,17 @@ namespace DailyWallpainter
             get
             {
                 string interval = Get("IntervalInMinute");
-                if (interval == "")
+                int parsed;
+
+                if (interval == ""
+                    || int.TryParse(interval, out parsed) == false
+                    || parsed <= 0)
                 {
-                    return 360;
+                    return DefaultIntervalInMinute;
                 }
                 else
                 {
-                    return int.Parse(interval);
+                    return parsed;
                 }
             }
             set
@@ -190,19 +198,24 @@ namespace DailyWallpainter
 
         protected RegistryKey GetKey()
         {
+            return GetKey(appKey);
+        }
+
+        protected RegistryKey GetKey(string keyPath)
+        {
             RegistryKey key;
             try
             {
-                key = Registry.CurrentUser.OpenSubKey(@"Software\xail\Daily Wallpainter", RegistryKeyPermissionCheck.ReadWriteSubTree);
+                key = Registry.CurrentUser.OpenSubKey(keyPath, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 if (key == null)
                 {
-                    key = Registry.CurrentUser.CreateSubKey(@"Software\xail\Daily Wallpainter", RegistryKeyPermissionCheck.ReadWriteSubTree);
+                    key = Registry.CurrentUser.CreateSubKey(keyPath, RegistryKeyPermissionCheck.ReadWriteSubTree);
                 }
             }
             catch (Exception)
             {
-                key = Registry.CurrentUser.CreateSubKey(@"Software\xail\Daily Wallpainter", RegistryKeyPermissionCheck.ReadWriteSubTree);
+                key = Registry.CurrentUser.CreateSubKey(keyPath, RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
 
             return key;
@@ -210,23 +223,22 @@ namespace DailyWallpainter
 
         public string Get(string name)
         {
-            RegistryKey key = null;
+            return Get(appKey, name);
+        }
+
+        public string Get(string keyPath, string name)
+        {
             string result = "";
 
             try
             {
-                key = GetKey();
-                result = key.GetValue(name).ToString();
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                if (key != null)
+                using (var key = GetKey(keyPath))
                 {
-                    key.Close();
+                    result = key.GetValue(name).ToString();
                 }
+            }
+            catch
+            {
             }
 
             return result;
@@ -234,19 +246,20 @@ namespace DailyWallpainter
 
         public void Set(string name, string value)
         {
-            RegistryKey key = null;
+            Set(appKey, name, value);
+        }
 
+        public void Set(string keyPath, string name, string value)
+        {
             try
             {
-                key = GetKey();
-                key.SetValue(name, value);
-            }
-            finally
-            {
-                if (key != null)
+                using (var key = GetKey())
                 {
-                    key.Close();
+                    key.SetValue(name, value);
                 }
+            }
+            catch
+            {
             }
         }
     }
