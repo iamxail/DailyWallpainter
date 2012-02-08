@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Win32;
 using System.Threading;
 using DailyWallpainter.UI;
+using DailyWallpainter.Helpers;
 
 namespace DailyWallpainter
 {
@@ -19,15 +20,13 @@ namespace DailyWallpainter
         private static frmSettings set;
         private static Settings s = Settings.Instance;
 
-        private static Mutex mutex = new Mutex(true, "DailyWallpainterMutexForSingleInstance");
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            if (mutex.WaitOne(TimeSpan.Zero, true) == false)
+            if (SingleInstanceProgram.IsSingleInstaced() == false)
             {
                 return;
             }
@@ -78,8 +77,6 @@ namespace DailyWallpainter
             tray.Dispose();
             tmrDownload.Stop();
             stopTimer.Set();
-            
-            mutex.ReleaseMutex();
         }
 
         public static void ShowSettings()

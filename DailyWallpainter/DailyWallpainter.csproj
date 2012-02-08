@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\SingleInstanceProgram.cs" />
     <Compile Include="UI\frmEditSource.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,7 +64,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Source.cs" />
     <Compile Include="UI\TrayIcon.cs" />
-    <Compile Include="Wallpaper.cs" />
+    <Compile Include="Helpers\Wallpaper.cs" />
     <EmbeddedResource Include="UI\frmEditSource.resx">
       <DependentUpon>frmEditSource.cs</DependentUpon>
     </EmbeddedResource>
