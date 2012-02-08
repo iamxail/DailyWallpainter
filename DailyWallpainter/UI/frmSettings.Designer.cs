@@ -48,6 +48,7 @@
             this.txtInterval = new System.Windows.Forms.TextBox();
             this.rdoCheckByInterval = new System.Windows.Forms.RadioButton();
             this.rdoCheckOnlyStart = new System.Windows.Forms.RadioButton();
+            this.lnkDownloadUpdate = new System.Windows.Forms.LinkLabel();
             this.mnuSources.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTitle)).BeginInit();
@@ -241,12 +242,25 @@
             this.rdoCheckOnlyStart.UseVisualStyleBackColor = true;
             this.rdoCheckOnlyStart.CheckedChanged += new System.EventHandler(this.rdoCheckOnlyStart_CheckedChanged);
             // 
+            // lnkDownloadUpdate
+            // 
+            this.lnkDownloadUpdate.Location = new System.Drawing.Point(376, 103);
+            this.lnkDownloadUpdate.Name = "lnkDownloadUpdate";
+            this.lnkDownloadUpdate.Size = new System.Drawing.Size(199, 23);
+            this.lnkDownloadUpdate.TabIndex = 13;
+            this.lnkDownloadUpdate.TabStop = true;
+            this.lnkDownloadUpdate.Text = "새로운 버전을 다운받으세요!";
+            this.lnkDownloadUpdate.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.lnkDownloadUpdate.Visible = false;
+            this.lnkDownloadUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkDownloadUpdate_LinkClicked);
+            // 
             // frmSettings
             // 
             this.AcceptButton = this.btnClose;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(596, 469);
+            this.Controls.Add(this.lnkDownloadUpdate);
             this.Controls.Add(this.txtInterval);
             this.Controls.Add(this.rdoCheckOnlyStart);
             this.Controls.Add(this.rdoCheckByInterval);
@@ -270,6 +284,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Shown += new System.EventHandler(this.frmSettings_Shown);
             this.mnuSources.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picTitle)).EndInit();
@@ -298,6 +313,7 @@
         private System.Windows.Forms.TextBox txtInterval;
         private System.Windows.Forms.RadioButton rdoCheckByInterval;
         private System.Windows.Forms.RadioButton rdoCheckOnlyStart;
+        private System.Windows.Forms.LinkLabel lnkDownloadUpdate;
     }
 }
 

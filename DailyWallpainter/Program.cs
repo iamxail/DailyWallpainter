@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using System.Threading;
 using DailyWallpainter.UI;
 using DailyWallpainter.Helpers;
+using DailyWallpainter.UpdateChecker;
 
 namespace DailyWallpainter
 {
@@ -41,6 +42,10 @@ namespace DailyWallpainter
                 }
             }
 
+            var updateChecker = new GitHubUpdateChecker("iamxail", "DailyWallpainter", "DailyWallpainter.exe");
+            IsNewVersionAvailable = updateChecker.IsNewVersionAvailable();
+            LatestVersion = updateChecker.LatestVersion;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -50,7 +55,8 @@ namespace DailyWallpainter
             lastWorking = s.IsCheckOnlyWhenStartup;
 
             if (s.InitialStart
-                || StartByWindows == false)
+                || StartByWindows == false
+                || (IsNewVersionAvailable && LatestVersion != s.LastestVersionInformed))
             {
                 ShowSettings();
             }
@@ -69,6 +75,9 @@ namespace DailyWallpainter
             tmrDownload.Stop();
             stopTimer.Set();
         }
+
+        public static bool IsNewVersionAvailable { get; private set; }
+        public static string LatestVersion { get; private set; }
 
         public static void ShowSettings()
         {
