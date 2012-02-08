@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 
-namespace DailyWallpainter
+namespace DailyWallpainter.UI
 {
     public partial class frmSettings : Form
     {

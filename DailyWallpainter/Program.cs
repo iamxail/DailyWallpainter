@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Microsoft.Win32;
 using System.Threading;
+using DailyWallpainter.UI;
 
 namespace DailyWallpainter
 {
@@ -14,11 +15,7 @@ namespace DailyWallpainter
         private static System.Timers.Timer tmrDownload;
         private static ManualResetEvent stopTimer;
         private static ManualResetEvent runningTimer;
-        private static System.Windows.Forms.NotifyIcon ntfTray;
-        private static System.Windows.Forms.ContextMenuStrip mnuTray;
-        private static System.Windows.Forms.ToolStripMenuItem mitShowSettings;
-        private static System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private static System.Windows.Forms.ToolStripMenuItem mitExit;
+        private static TrayIcon tray;
         private static frmSettings set;
         private static Settings s = Settings.Instance;
 
@@ -41,48 +38,8 @@ namespace DailyWallpainter
             stopTimer = new ManualResetEvent(false);
             runningTimer = new ManualResetEvent(false);
             tmrDownload = new System.Timers.Timer();
-            mnuTray = new System.Windows.Forms.ContextMenuStrip();
-            mitShowSettings = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            mitExit = new System.Windows.Forms.ToolStripMenuItem();
-            ntfTray = new System.Windows.Forms.NotifyIcon();
+            tray = new TrayIcon();
 
-            // 
-            // mnuTray
-            // 
-            mnuTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                mitShowSettings,
-                toolStripMenuItem1,
-                mitExit});
-            mnuTray.Name = "mnuTray";
-            mnuTray.Size = new System.Drawing.Size(153, 76);
-            // 
-            // mitShowSettings
-            // 
-            mitShowSettings.Name = "mitShowSettings";
-            mitShowSettings.Size = new System.Drawing.Size(152, 22);
-            mitShowSettings.Text = "설정(&S)";
-            mitShowSettings.Click += new EventHandler(mitShowSettings_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
-            // 
-            // mitExit
-            // 
-            mitExit.Name = "mitExit";
-            mitExit.Size = new System.Drawing.Size(152, 22);
-            mitExit.Text = "종료(&X)";
-            mitExit.Click += new EventHandler(mitExit_Click);
-            // 
-            // ntfTray
-            // 
-            ntfTray.ContextMenuStrip = mnuTray;
-            ntfTray.Icon = Properties.Resources.Paper;
-            ntfTray.Text = "Daily Wallpainter";
-            ntfTray.Visible = true;
-            ntfTray.MouseClick += new MouseEventHandler(ntfTray_MouseClick);
             // 
             // tmrDownload
             // 
@@ -118,13 +75,14 @@ namespace DailyWallpainter
 
             Application.Run();
 
+            tray.Dispose();
             tmrDownload.Stop();
             stopTimer.Set();
-            ntfTray.Visible = false;
+            
             mutex.ReleaseMutex();
         }
 
-        private static void ShowSettings()
+        public static void ShowSettings()
         {
             tmrDownload.Stop();
 
@@ -148,24 +106,6 @@ namespace DailyWallpainter
             if (runningTimer.WaitOne(0) == false)
             {
                 tmrDownload.Start();
-            }
-        }
-
-        private static void mitShowSettings_Click(object sender, EventArgs e)
-        {
-            ShowSettings();
-        }
-
-        private static void mitExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private static void ntfTray_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                ShowSettings();
             }
         }
 

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
+using DailyWallpainter.UI;
 
 namespace DailyWallpainter
 {

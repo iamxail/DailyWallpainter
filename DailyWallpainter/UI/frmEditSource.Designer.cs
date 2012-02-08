@@ -1,4 +1,4 @@
-﻿namespace DailyWallpainter
+﻿namespace DailyWallpainter.UI
 {
     partial class frmEditSource
     {

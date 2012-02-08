@@ -9,7 +9,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace DailyWallpainter
+namespace DailyWallpainter.UI
 {
     public partial class frmEditSource : Form
     {
