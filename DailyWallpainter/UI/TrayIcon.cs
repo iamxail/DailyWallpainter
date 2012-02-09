@@ -61,7 +61,7 @@ namespace DailyWallpainter.UI
 
         private static void mitShowSettings_Click(object sender, EventArgs e)
         {
-            Program.ShowSettings();
+            Program.Context.ShowSettings();
         }
 
         private static void mitExit_Click(object sender, EventArgs e)
@@ -73,7 +73,7 @@ namespace DailyWallpainter.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                Program.ShowSettings();
+                Program.Context.ShowSettings();
             }
         }
 
