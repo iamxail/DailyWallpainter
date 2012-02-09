@@ -42,26 +42,26 @@ namespace DailyWallpainter
                 }
             }
 
-            var updateChecker = new GitHubUpdateChecker("iamxail", "DailyWallpainter", "DailyWallpainter.exe");
-            updateChecker.CheckCompleted += new GitHubUpdateChecker.CheckCompletedEventHandler(updateChecker_CheckCompleted);
-            updateChecker.CheckAsync(updateChecker);
-            IsNewVersionAvailable = false;
-            LatestVersion = string.Empty;
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             stopTimer = new ManualResetEvent(false);
-            passTimer = new ManualResetEvent(false);
+            passTimer = new ManualResetEvent(true);
+
+            isNewVersionAvailable = false;
+            LatestVersion = string.Empty;
 
             lastWorking = s.IsCheckOnlyWhenStartup;
 
             if (s.InitialStart
-                || StartByWindows == false
-                || (IsNewVersionAvailable && LatestVersion != s.LastestVersionInformed))
+                || StartByWindows == false)
             {
                 ShowSettings();
             }
+
+            var updateChecker = new GitHubUpdateChecker("iamxail", "DailyWallpainter", "DailyWallpainter.exe");
+            updateChecker.CheckCompleted += new GitHubUpdateChecker.CheckCompletedEventHandler(updateChecker_CheckCompleted);
+            updateChecker.CheckAsync(updateChecker);
 
             tmrDownload = new System.Timers.Timer();
             tmrDownload.Interval = 5000;
@@ -83,29 +83,85 @@ namespace DailyWallpainter
             var updateChecker = e.UserState as GitHubUpdateChecker;
 
             LatestVersion = updateChecker.LatestVersion;
-            IsNewVersionAvailable = updateChecker.IsNewVersionAvailable;
+            isNewVersionAvailable = updateChecker.IsNewVersionAvailable;
 
-            if (IsNewVersionAvailable && LatestVersion != s.LastestVersionInformed)
+            if (IsNeededToNotifyNewVersion())
             {
-                ShowSettings();
+                if (IsfrmSettingAvailable())
+                {
+                    set.NotifyNewVersion();
+                }
+                else
+                {
+                    ShowSettings();
+                }
+            }
+            else
+            {
+                passTimer.Reset();
             }
         }
 
-        public static bool IsNewVersionAvailable { get; private set; }
+        private static bool isNewVersionAvailable;
         public static string LatestVersion { get; private set; }
 
+        public static bool IsNeededToNotifyNewVersion()
+        {
+            return isNewVersionAvailable
+                && LatestVersion != s.LastestVersionInformed;
+        }
+
+        private static bool IsfrmSettingAvailable()
+        {
+            return set != null
+                && set.IsDisposed == false;
+        }
+
+        private delegate void Action();
         public static void ShowSettings()
         {
             passTimer.Set();
 
-            if (set == null || set.IsDisposed)
+            if (IsfrmSettingAvailable())
             {
-                set = new frmSettings();
-                set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
+                if (set.InvokeRequired)
+                {
+                    set.Invoke(new Action(() =>
+                        {
+                            set.Show();
+                            set.Activate();
+                        }));
+                }
+                else
+                {
+                    set.Show();
+                    set.Activate();
+                }
             }
+            else
+            {
+                //todo
+                /*
+                if (Application.MessageLoop)
+                {
+                    set = new frmSettings();
+                    set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
 
-            set.Show();
-            set.Activate();
+                    set.Show();
+                    set.Activate();
+                }
+                else
+                {
+                    syncContx.Post(new SendOrPostCallback((o) =>
+                        {
+                            set = new frmSettings();
+                            set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
+
+                            set.Show();
+                            set.Activate();
+                        }), null);
+                }*/
+            }
         }
 
         private static void frmSettings_FormClosed(object sender, FormClosedEventArgs e)

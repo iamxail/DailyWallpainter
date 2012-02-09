@@ -60,12 +60,31 @@ namespace DailyWallpainter.UI
 
             rdoCheckOnlyStart.Checked = s.IsCheckOnlyWhenStartup;
 
-            if (Program.IsNewVersionAvailable)
-            {
-                lnkDownloadUpdate.Visible = true;
-            }
-
             initialized = true;
+        }
+
+        private delegate void Action();
+        public void NotifyNewVersion()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(NotifyNewVersion));
+            }
+            else
+            {
+                if (Program.IsNeededToNotifyNewVersion())
+                {
+                    s.LastestVersionInformed = Program.LatestVersion;
+
+                    lnkDownloadUpdate.Visible = true;
+
+                    if (MessageBox.Show(this, "Daily Wallpainter가 새 " + Program.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", "Daily Wallpainter", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        lnkDownloadUpdate_LinkClicked(this, null);
+                    }
+                }
+            }
         }
 
         private void RefreshSources()
@@ -273,17 +292,7 @@ namespace DailyWallpainter.UI
 
         private void frmSettings_Shown(object sender, EventArgs e)
         {
-            if (Program.IsNewVersionAvailable
-                && Program.LatestVersion != s.LastestVersionInformed)
-            {
-                if (MessageBox.Show("Daily Wallpainter가 새 " + Program.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", "Daily Wallpainter", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                    == System.Windows.Forms.DialogResult.Yes)
-                {
-                    lnkDownloadUpdate_LinkClicked(this, null);
-                }
-
-                s.LastestVersionInformed = Program.LatestVersion;
-            }
+            NotifyNewVersion();
         }
     }
 }
