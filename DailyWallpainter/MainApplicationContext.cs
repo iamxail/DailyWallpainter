@@ -28,16 +28,6 @@ namespace DailyWallpainter
 
             syncCntx = new WindowsFormsSynchronizationContext();
 
-            bool StartByWindows = false;
-            foreach (var arg in Environment.GetCommandLineArgs())
-            {
-                if (StartByWindows == false
-                    && arg.ToLower() == "/winstart")
-                {
-                    StartByWindows = true;
-                }
-            }
-
             stopTimer = new ManualResetEvent(false);
             passTimer = new ManualResetEvent(true);
 
@@ -46,8 +36,7 @@ namespace DailyWallpainter
 
             lastWorking = s.IsCheckOnlyWhenStartup;
 
-            if (s.InitialStart
-                || StartByWindows == false)
+            if (IsNeededToShowSettings())
             {
                 ShowSettings();
             }
@@ -70,6 +59,22 @@ namespace DailyWallpainter
             tray.Dispose();
             tmrDownload.Stop();
             stopTimer.Set();
+        }
+
+        private bool IsNeededToShowSettings()
+        {
+            bool StartByWindows = false;
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                if (StartByWindows == false
+                    && arg.ToLower() == "/winstart")
+                {
+                    StartByWindows = true;
+                }
+            }
+
+            return s.InitialStart
+                || StartByWindows == false;
         }
 
         private void updateChecker_CheckCompleted(object sender, CheckCompletedEventArgs e)
