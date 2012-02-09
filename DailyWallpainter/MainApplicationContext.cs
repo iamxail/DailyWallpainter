@@ -116,7 +116,6 @@ namespace DailyWallpainter
                 && set.IsDisposed == false;
         }
 
-        private delegate void Action();
         public void ShowSettings()
         {
             passTimer.Set();
@@ -125,7 +124,7 @@ namespace DailyWallpainter
             {
                 if (set.InvokeRequired)
                 {
-                    set.Invoke(new Action(() =>
+                    set.Invoke(new MethodInvoker(() =>
                     {
                         set.Show();
                         set.Activate();
@@ -149,7 +148,7 @@ namespace DailyWallpainter
                 }
                 else
                 {
-                    this.BeginInvoke(new Action(() =>
+                    this.BeginInvoke(new MethodInvoker(() =>
                         {
                             set = new frmSettings();
                             set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);

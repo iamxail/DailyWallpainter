@@ -13,8 +13,6 @@ namespace DailyWallpainter.UI
 {
     public partial class frmEditSource : Form
     {
-        private delegate void Action();
-
         public frmEditSource()
         {
             InitializeComponent();
@@ -86,7 +84,7 @@ namespace DailyWallpainter.UI
             }
         }
 
-        private void InvokeIfRequired(Action func)
+        private void InvokeIfRequired(MethodInvoker func)
         {
             if (this.InvokeRequired)
             {

@@ -63,12 +63,11 @@ namespace DailyWallpainter.UI
             initialized = true;
         }
 
-        private delegate void Action();
         public void NotifyNewVersion()
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new Action(NotifyNewVersion));
+                this.Invoke(new MethodInvoker(NotifyNewVersion));
             }
             else
             {
