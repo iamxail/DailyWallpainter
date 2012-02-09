@@ -72,13 +72,13 @@ namespace DailyWallpainter.UI
             }
             else
             {
-                if (Program.IsNeededToNotifyNewVersion())
+                if (Program.Context.IsNeededToNotifyNewVersion())
                 {
-                    s.LastestVersionInformed = Program.LatestVersion;
+                    s.LastestVersionInformed = Program.Context.LatestVersion;
 
                     lnkDownloadUpdate.Visible = true;
 
-                    if (MessageBox.Show(this, "Daily Wallpainter가 새 " + Program.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", "Daily Wallpainter", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    if (MessageBox.Show(this, "Daily Wallpainter가 새 " + Program.Context.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", "Daily Wallpainter", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == System.Windows.Forms.DialogResult.Yes)
                     {
                         lnkDownloadUpdate_LinkClicked(this, null);
