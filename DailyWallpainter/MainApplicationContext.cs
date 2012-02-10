@@ -41,7 +41,7 @@ namespace DailyWallpainter
                 ShowSettings();
             }
 
-            var updateChecker = new GitHubUpdateChecker("iamxail", "DailyWallpainter", "DailyWallpainter.exe");
+            var updateChecker = new GitHubUpdateChecker("iamxail", Program.SafeName, Program.ExeName);
             updateChecker.CheckCompleted += new GitHubUpdateChecker.CheckCompletedEventHandler(updateChecker_CheckCompleted);
             updateChecker.CheckAsync(updateChecker);
 
@@ -55,10 +55,32 @@ namespace DailyWallpainter
 
         private void Application_ApplicationExit(object sender, EventArgs e)
         {
-            SingleInstanceProgram.Release();
-            tray.Dispose();
-            tmrDownload.Stop();
-            stopTimer.Set();
+            //http://stackoverflow.com/questions/1067844/issue-with-notifyicon-not-dissappearing-on-winforms-app
+            //this event can be raised several times. - it can cause NullReferenceException
+
+            try
+            {
+                tray.Dispose();
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                tmrDownload.Stop();
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                stopTimer.Set();
+            }
+            catch
+            {
+            }
         }
 
         private bool IsNeededToShowSettings()
@@ -84,9 +106,9 @@ namespace DailyWallpainter
             LatestVersion = updateChecker.LatestVersion;
             isNewVersionAvailable = updateChecker.IsNewVersionAvailable;
 
-            if (IsNeededToNotifyNewVersion())
+            if (IsNeededToNotifyNewVersion)
             {
-                if (IsfrmSettingAvailable())
+                if (IsfrmSettingAvailable)
                 {
                     set.NotifyNewVersion();
                 }
@@ -104,23 +126,29 @@ namespace DailyWallpainter
         private bool isNewVersionAvailable;
         public string LatestVersion { get; private set; }
 
-        public bool IsNeededToNotifyNewVersion()
+        public bool IsNeededToNotifyNewVersion
         {
-            return isNewVersionAvailable
-                && LatestVersion != s.LastestVersionInformed;
+            get
+            {
+                return isNewVersionAvailable
+                    && LatestVersion != s.LastestVersionInformed;
+            }
         }
 
-        private bool IsfrmSettingAvailable()
+        private bool IsfrmSettingAvailable
         {
-            return set != null
-                && set.IsDisposed == false;
+            get
+            {
+                return set != null
+                    && set.IsDisposed == false;
+            }
         }
 
         public void ShowSettings()
         {
             passTimer.Set();
 
-            if (IsfrmSettingAvailable())
+            if (IsfrmSettingAvailable)
             {
                 if (set.InvokeRequired)
                 {
@@ -138,24 +166,24 @@ namespace DailyWallpainter
             }
             else
             {
-                if (Application.MessageLoop)
+                if (this.InvokeRequired)
+                {
+                    this.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        set = new frmSettings();
+                        set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
+
+                        set.Show();
+                        set.Activate();
+                    }));
+                }
+                else
                 {
                     set = new frmSettings();
                     set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
 
                     set.Show();
                     set.Activate();
-                }
-                else
-                {
-                    this.BeginInvoke(new MethodInvoker(() =>
-                        {
-                            set = new frmSettings();
-                            set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
-
-                            set.Show();
-                            set.Activate();
-                        }));
                 }
             }
         }
@@ -181,7 +209,8 @@ namespace DailyWallpainter
 
         private void frmSettings_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (tmrDownload.Interval >= 60000 && tmrDownload.Interval != s.IntervalInMinute * 60000)
+            if (tmrDownload.Interval >= 60000
+                && tmrDownload.Interval != s.IntervalInMinute * 60000)
             {
                 tmrDownload.Interval = s.IntervalInMinute * 60000;
             }
@@ -191,13 +220,13 @@ namespace DailyWallpainter
 
         private void tmrDownload_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            Bitmap desktop = null;
-            Bitmap appBg = null;
-
             if (passTimer.WaitOne(0))
             {
                 return;
             }
+
+            Bitmap desktop = null;
+            Bitmap appBg = null;
 
             try
             {
@@ -240,7 +269,7 @@ namespace DailyWallpainter
 
                 if (appBg != null)
                 {
-                    string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Daily Wallpainter");
+                    string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Program.Name);
                     if (Directory.Exists(appBgPath) == false)
                     {
                         Directory.CreateDirectory(appBgPath);

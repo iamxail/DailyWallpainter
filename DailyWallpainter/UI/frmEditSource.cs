@@ -75,7 +75,7 @@ namespace DailyWallpainter.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(ex.Message, Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 this.Enabled = true;
                 txtUrl.Focus();
                 lblTestInfo.Text = "실패";
@@ -164,7 +164,7 @@ namespace DailyWallpainter.UI
 
                 InvokeIfRequired(() =>
                     {
-                        MessageBox.Show(ex.Message, "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(ex.Message, Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         this.Enabled = true;
                         txtRegExp.Focus();
                         lblTestInfo.Text = "실패";
@@ -220,7 +220,7 @@ namespace DailyWallpainter.UI
 
                 InvokeIfRequired(() =>
                 {
-                    MessageBox.Show(ex.Message, "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(ex.Message, Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     this.Enabled = true;
                     txtRegExp.Focus();
                     lblTestInfo.Text = "실패";
@@ -295,7 +295,7 @@ namespace DailyWallpainter.UI
             }
             else
             {
-                MessageBox.Show("다음 문제가 발생하였습니다:\r\n" + error, "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("다음 문제가 발생하였습니다:\r\n" + error, Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 if (target != null)
                 {
                     target.Focus();

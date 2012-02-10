@@ -23,8 +23,13 @@ namespace DailyWallpainter
             Context = new MainApplicationContext();
 
             Application.Run(Context);
+
+            SingleInstanceProgram.Release();
         }
 
         public static MainApplicationContext Context { get; private set; }
+        public const string Name = "Daily Wallpainter";
+        public const string SafeName = "DailyWallpainter";
+        public const string ExeName = SafeName + ".exe";
     }
 }

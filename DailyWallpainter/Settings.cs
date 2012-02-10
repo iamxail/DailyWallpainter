@@ -25,7 +25,7 @@ namespace DailyWallpainter
             }
         }
 
-        private const string appName = @"Daily Wallpainter";
+        private const string appName = Program.Name;
         private readonly string appKey = @"Software\xail\" + appName;
         private const string startupKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
         private readonly string DefaultSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), appName);

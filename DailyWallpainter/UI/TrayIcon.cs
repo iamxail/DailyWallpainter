@@ -93,9 +93,15 @@ namespace DailyWallpainter.UI
         {
             if (disposing)
             {
-                ntfTray.Visible = false;
+                if (ntfTray != null)
+                {
+                    var tray = ntfTray;
+                    ntfTray = null;
 
-                ntfTray.Dispose();
+                    tray.Visible = false;
+                    tray.Dispose();
+                }
+
                 mnuTray.Dispose();
                 mitShowSettings.Dispose();
                 toolStripMenuItem1.Dispose();
