@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace DailyWallpainter
 {
@@ -56,8 +57,12 @@ namespace DailyWallpainter
         {
             switch (settingsVersion)
             {
+                case "":
+                    //initially installed
+                    break;
+
                 case "1.0.0.0":
-                    Sources.ForceInitialize();
+                    Sources.Initialize(true);
                     Set("IntervalInMinute", "360");
                     goto case "1.1.0.0";
 
@@ -66,9 +71,15 @@ namespace DailyWallpainter
                     {
                         RunOnStartup = true;
                     }
+                    goto case "1.3.0.0";
+
+                //1.2 is not released
+
+                case "1.3.0.0":
+                    //do nothing
                     break;
 
-                default:
+                default: //maybe settings of higher version is detected
                     //do nothing
                     break;
             }

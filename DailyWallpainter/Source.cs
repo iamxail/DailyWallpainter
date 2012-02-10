@@ -119,7 +119,7 @@ namespace DailyWallpainter
                 list = new List<Source>();
             }
 
-            InitializeInternal();
+            Initialize();
         }
 
         internal SourcesCollection(string from) : this()
@@ -127,14 +127,13 @@ namespace DailyWallpainter
             list = new List<Source>(Source.GetSourcesFromString(from));
         }
 
-        public void ForceInitialize()
+        public void Initialize(bool force = false)
         {
-            list.Clear();
-            InitializeInternal();
-        }
+            if (force)
+            {
+                list.Clear();
+            }
 
-        private void InitializeInternal()
-        {
             if (list.Count <= 0)
             {
                 AddRange(new Source[] {
