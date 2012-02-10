@@ -234,6 +234,32 @@ namespace DailyWallpainter
             }
         }
 
+        public Size ResolutionLowerLimit
+        {
+            get
+            {
+                try
+                {
+                    var raw = Get("ResolutionLowerLimit");
+                    var splitted = raw.Split('x');
+
+                    if (splitted.Length == 2)
+                    {
+                        return new Size(int.Parse(splitted[0]), int.Parse(splitted[1]));
+                    }
+                }
+                catch
+                {
+                }
+
+                return new Size(700, 500);
+            }
+            set
+            {
+                Set("ResolutionLowerLimit", value.Width.ToString() + "x" + value.Height.ToString());
+            }
+        }
+
         /*public int DaysToSave
         {
             get
