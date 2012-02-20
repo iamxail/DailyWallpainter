@@ -136,6 +136,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmAddtnlOptions";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);

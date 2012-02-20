@@ -11,9 +11,12 @@ namespace DailyWallpainter.UI
     public partial class frmAddtnlOptions : Form
     {
         private Settings s = Settings.Instance;
+        private bool initialized;
 
         public frmAddtnlOptions()
         {
+            initialized = false;
+
             InitializeComponent();
 
             var RLowerLimit = s.ResolutionLowerLimit;
@@ -36,7 +39,10 @@ namespace DailyWallpainter.UI
             lblDescRL1.Enabled = chked;
             lblDescRL2.Enabled = chked;
 
-            s.ResolutionLowerLimit = new SizeWithState(chked, int.Parse(txtResolutionLowerWidth.Text),  int.Parse(txtResolutionLowerHeight.Text));
+            if (initialized)
+            {
+                s.ResolutionLowerLimit = new SizeWithState(chked, int.Parse(txtResolutionLowerWidth.Text), int.Parse(txtResolutionLowerHeight.Text));
+            }
         }
 
         private void txtResolutionLowerWidth_Leave(object sender, EventArgs e)
