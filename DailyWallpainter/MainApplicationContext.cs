@@ -248,13 +248,21 @@ namespace DailyWallpainter
                         using (var ms = new MemoryStream(data))
                         using (var bitmap = new Bitmap(ms))
                         {
-                            desktop = bitmap.ResizeToFitOutside(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
-                            appBg = bitmap.Crop(0, 0, 100, 165);
+                            var RsltnLowerLimit = s.ResolutionLowerLimit;
+                            if (bitmap.Width > RsltnLowerLimit.Width
+                                && bitmap.Height > RsltnLowerLimit.Height)
+                            {
+                                desktop = bitmap.ResizeToFitOutside(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
+                                appBg = bitmap.Crop(0, 0, 100, 165);
+                            }
                         }
 
                         s.Sources.Save();
 
-                        break;
+                        if (desktop != null)
+                        {
+                            break;
+                        }
                     }
                 }
 

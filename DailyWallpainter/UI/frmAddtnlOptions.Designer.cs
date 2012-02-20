@@ -79,9 +79,9 @@
             this.chkResolutionLowerLimit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkResolutionLowerLimit.Location = new System.Drawing.Point(18, 51);
             this.chkResolutionLowerLimit.Name = "chkResolutionLowerLimit";
-            this.chkResolutionLowerLimit.Size = new System.Drawing.Size(192, 16);
+            this.chkResolutionLowerLimit.Size = new System.Drawing.Size(220, 16);
             this.chkResolutionLowerLimit.TabIndex = 0;
-            this.chkResolutionLowerLimit.Text = "저해상도 이미지 다운로드 금지";
+            this.chkResolutionLowerLimit.Text = "저해상도 이미지 배경화면 설정 금지";
             this.chkResolutionLowerLimit.UseVisualStyleBackColor = true;
             this.chkResolutionLowerLimit.CheckedChanged += new System.EventHandler(this.chkResolutionLowerLimit_CheckedChanged);
             // 
@@ -115,9 +115,9 @@
             this.lblDescRL2.AutoSize = true;
             this.lblDescRL2.Location = new System.Drawing.Point(130, 78);
             this.lblDescRL2.Name = "lblDescRL2";
-            this.lblDescRL2.Size = new System.Drawing.Size(321, 12);
+            this.lblDescRL2.Size = new System.Drawing.Size(297, 12);
             this.lblDescRL2.TabIndex = 4;
-            this.lblDescRL2.Text = "이하의 해상도를 가지는 이미지는 다운로드 받지 않습니다.";
+            this.lblDescRL2.Text = "이하의 너비 또는 높이를 가지는 이미지를 금지합니다.";
             // 
             // frmAddtnlOptions
             // 
