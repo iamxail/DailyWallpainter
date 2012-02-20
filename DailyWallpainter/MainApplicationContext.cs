@@ -249,8 +249,8 @@ namespace DailyWallpainter
                         using (var bitmap = new Bitmap(ms))
                         {
                             var RsltnLowerLimit = s.ResolutionLowerLimit;
-                            if (bitmap.Width > RsltnLowerLimit.Width
-                                && bitmap.Height > RsltnLowerLimit.Height)
+                            if (RsltnLowerLimit.Enabled == false
+                                || (bitmap.Width > RsltnLowerLimit.Width && bitmap.Height > RsltnLowerLimit.Height))
                             {
                                 desktop = bitmap.ResizeToFitOutside(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
                                 appBg = bitmap.Crop(0, 0, 100, 165);

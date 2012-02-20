@@ -23,6 +23,8 @@ namespace DailyWallpainter.UI
             chkResolutionLowerLimit.Checked = RLowerLimit.Enabled;
             txtResolutionLowerWidth.Text = RLowerLimit.Width.ToString();
             txtResolutionLowerHeight.Text = RLowerLimit.Height.ToString();
+
+            initialized = true;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
