@@ -10,44 +10,58 @@ namespace DailyWallpainter.Helpers
     {
         public static Bitmap Crop(this Bitmap original, int x, int y, int width, int height)
         {
-            Bitmap result = new Bitmap(width, height);
-
-            using (var g = Graphics.FromImage(result))
+            try
             {
-                g.DrawImageUnscaledAndClipped(original, new Rectangle(x, y, width, height));
-            }
+                Bitmap result = new Bitmap(width, height);
 
-            return result;
+                using (var g = Graphics.FromImage(result))
+                {
+                    g.DrawImageUnscaledAndClipped(original, new Rectangle(x, y, width, height));
+                }
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static Bitmap ResizeToFitOutside(this Bitmap target, int width, int height)
         {
-            Bitmap result = new Bitmap(width, height);
-
-            using (var g = Graphics.FromImage(result))
+            try
             {
-                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                Bitmap result = new Bitmap(width, height);
 
-                Rectangle rect;
-                if ((float)width / (float)height > (float)target.Width / (float)target.Height)
+                using (var g = Graphics.FromImage(result))
                 {
-                    int newHeight = (int)((float)target.Height / (float)target.Width * (float)width);
+                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-                    rect = new Rectangle(0, (height - newHeight) / 2, width, newHeight);
+                    Rectangle rect;
+                    if ((float)width / (float)height > (float)target.Width / (float)target.Height)
+                    {
+                        int newHeight = (int)((float)target.Height / (float)target.Width * (float)width);
+
+                        rect = new Rectangle(0, (height - newHeight) / 2, width, newHeight);
+                    }
+                    else
+                    {
+                        int newWidth = (int)((float)target.Width / (float)target.Height * (float)height);
+
+                        rect = new Rectangle((width - newWidth) / 2, 0, newWidth, height);
+                    }
+
+                    g.DrawImage(target, rect);
                 }
-                else
-                {
-                    int newWidth = (int)((float)target.Width / (float)target.Height * (float)height);
 
-                    rect = new Rectangle((width - newWidth) / 2, 0, newWidth, height);
-                }
-
-                g.DrawImage(target, rect);
+                return result;
             }
-
-            return result;
+            catch
+            {
+                return null;
+            }
         }
 
         private static string GetBitmapExtension(byte[] bitmapData)

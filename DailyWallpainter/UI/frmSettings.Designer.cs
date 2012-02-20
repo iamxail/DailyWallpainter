@@ -43,6 +43,7 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnAddtnlOptions = new System.Windows.Forms.Button();
             this.picTitle = new System.Windows.Forms.PictureBox();
             this.chkStartup = new System.Windows.Forms.CheckBox();
             this.txtInterval = new System.Windows.Forms.TextBox();
@@ -181,11 +182,24 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.SystemColors.Control;
+            this.panel2.Controls.Add(this.btnAddtnlOptions);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Location = new System.Drawing.Point(0, 423);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(607, 100);
             this.panel2.TabIndex = 11;
+            // 
+            // btnAddtnlOptions
+            // 
+            this.btnAddtnlOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddtnlOptions.Location = new System.Drawing.Point(22, 11);
+            this.btnAddtnlOptions.Margin = new System.Windows.Forms.Padding(0);
+            this.btnAddtnlOptions.Name = "btnAddtnlOptions";
+            this.btnAddtnlOptions.Size = new System.Drawing.Size(95, 22);
+            this.btnAddtnlOptions.TabIndex = 7;
+            this.btnAddtnlOptions.Text = "추가 옵션(&D)";
+            this.btnAddtnlOptions.UseVisualStyleBackColor = true;
+            this.btnAddtnlOptions.Click += new System.EventHandler(this.btnAddtnlOptions_Click);
             // 
             // picTitle
             // 
@@ -314,6 +328,7 @@
         private System.Windows.Forms.RadioButton rdoCheckByInterval;
         private System.Windows.Forms.RadioButton rdoCheckOnlyStart;
         private System.Windows.Forms.LinkLabel lnkDownloadUpdate;
+        private System.Windows.Forms.Button btnAddtnlOptions;
     }
 }
 

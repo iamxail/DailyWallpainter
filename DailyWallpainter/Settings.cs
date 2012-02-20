@@ -234,6 +234,26 @@ namespace DailyWallpainter
             }
         }
 
+        public SizeWithState ResolutionLowerLimit
+        {
+            get
+            {
+                try
+                {
+                    return SizeWithState.FromString(Get("ResolutionLowerLimit"));
+                }
+                catch
+                {
+                }
+
+                return new SizeWithState(true, 700, 500);
+            }
+            set
+            {
+                Set("ResolutionLowerLimit", value.ToString());
+            }
+        }
+
         /*public int DaysToSave
         {
             get
@@ -319,6 +339,57 @@ namespace DailyWallpainter
             catch
             {
             }
+        }
+    }
+
+    public class SizeWithState
+    {
+        public bool Enabled { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        public SizeWithState(bool enabled, int width, int height)
+        {
+            Enabled = enabled;
+            Width = width;
+            Height = height;
+        }
+
+        public override string ToString()
+        {
+            return Enabled.ToString() + "," + Width.ToString() + "x" + Height.ToString();
+        }
+
+        public static SizeWithState FromString(string source)
+        {
+            var enabledAndSize = source.Split(',');
+            if (enabledAndSize.Length != 2)
+            {
+                throw new ArgumentException();
+            }
+
+            bool enabled;
+            if (bool.TryParse(enabledAndSize[0], out enabled) == false)
+            {
+                throw new ArgumentException();
+            }
+
+            var widthAndHeight = enabledAndSize[1].Split('x');
+            if (widthAndHeight.Length != 2)
+            {
+                throw new ArgumentException();
+            }
+
+            int width;
+            int height;
+
+            if (int.TryParse(widthAndHeight[0], out width) == false
+                || int.TryParse(widthAndHeight[1], out height) == false)
+            {
+                throw new ArgumentException();
+            }
+
+            return new SizeWithState(enabled, width, height);
         }
     }
 }
