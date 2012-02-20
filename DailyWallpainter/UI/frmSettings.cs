@@ -293,5 +293,13 @@ namespace DailyWallpainter.UI
         {
             NotifyNewVersion();
         }
+
+        private void btnAddtnlOptions_Click(object sender, EventArgs e)
+        {
+            using (var addopts = new frmAddtnlOptions())
+            {
+                addopts.ShowDialog(this);
+            }
+        }
     }
 }
