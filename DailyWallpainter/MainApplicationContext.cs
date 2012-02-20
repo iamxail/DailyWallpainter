@@ -117,7 +117,7 @@ namespace DailyWallpainter
                     ShowSettings();
                 }
             }
-            else
+            else if (IsfrmSettingAvailable == false)
             {
                 passTimer.Reset();
             }
