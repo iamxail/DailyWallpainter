@@ -122,7 +122,7 @@ namespace DailyWallpainter
             Initialize();
         }
 
-        internal SourcesCollection(string from) : this()
+        internal SourcesCollection(string from)
         {
             list = new List<Source>(Source.GetSourcesFromString(from));
         }
