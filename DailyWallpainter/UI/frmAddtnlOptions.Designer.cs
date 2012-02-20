@@ -31,6 +31,11 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnClose = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkResolutionLowerLimit = new System.Windows.Forms.CheckBox();
+            this.txtResolutionLowerWidth = new System.Windows.Forms.TextBox();
+            this.lblDescRL1 = new System.Windows.Forms.Label();
+            this.txtResolutionLowerHeight = new System.Windows.Forms.TextBox();
+            this.lblDescRL2 = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,7 +48,7 @@
             this.panel2.Location = new System.Drawing.Point(-2, 412);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(489, 100);
-            this.panel2.TabIndex = 13;
+            this.panel2.TabIndex = 5;
             // 
             // btnClose
             // 
@@ -65,7 +70,54 @@
             this.panel1.Location = new System.Drawing.Point(-5, 411);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(492, 1);
-            this.panel1.TabIndex = 12;
+            this.panel1.TabIndex = 6;
+            // 
+            // chkResolutionLowerLimit
+            // 
+            this.chkResolutionLowerLimit.AutoSize = true;
+            this.chkResolutionLowerLimit.Checked = true;
+            this.chkResolutionLowerLimit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkResolutionLowerLimit.Location = new System.Drawing.Point(18, 51);
+            this.chkResolutionLowerLimit.Name = "chkResolutionLowerLimit";
+            this.chkResolutionLowerLimit.Size = new System.Drawing.Size(192, 16);
+            this.chkResolutionLowerLimit.TabIndex = 0;
+            this.chkResolutionLowerLimit.Text = "저해상도 이미지 다운로드 금지";
+            this.chkResolutionLowerLimit.UseVisualStyleBackColor = true;
+            this.chkResolutionLowerLimit.CheckedChanged += new System.EventHandler(this.chkResolutionLowerLimit_CheckedChanged);
+            // 
+            // txtResolutionLowerWidth
+            // 
+            this.txtResolutionLowerWidth.Location = new System.Drawing.Point(31, 73);
+            this.txtResolutionLowerWidth.Name = "txtResolutionLowerWidth";
+            this.txtResolutionLowerWidth.Size = new System.Drawing.Size(42, 21);
+            this.txtResolutionLowerWidth.TabIndex = 1;
+            this.txtResolutionLowerWidth.Leave += new System.EventHandler(this.txtResolutionLowerWidth_Leave);
+            // 
+            // lblDescRL1
+            // 
+            this.lblDescRL1.AutoSize = true;
+            this.lblDescRL1.Location = new System.Drawing.Point(74, 78);
+            this.lblDescRL1.Name = "lblDescRL1";
+            this.lblDescRL1.Size = new System.Drawing.Size(12, 12);
+            this.lblDescRL1.TabIndex = 2;
+            this.lblDescRL1.Text = "x";
+            // 
+            // txtResolutionLowerHeight
+            // 
+            this.txtResolutionLowerHeight.Location = new System.Drawing.Point(86, 73);
+            this.txtResolutionLowerHeight.Name = "txtResolutionLowerHeight";
+            this.txtResolutionLowerHeight.Size = new System.Drawing.Size(42, 21);
+            this.txtResolutionLowerHeight.TabIndex = 3;
+            this.txtResolutionLowerHeight.Leave += new System.EventHandler(this.txtResolutionLowerHeight_Leave);
+            // 
+            // lblDescRL2
+            // 
+            this.lblDescRL2.AutoSize = true;
+            this.lblDescRL2.Location = new System.Drawing.Point(130, 78);
+            this.lblDescRL2.Name = "lblDescRL2";
+            this.lblDescRL2.Size = new System.Drawing.Size(321, 12);
+            this.lblDescRL2.TabIndex = 4;
+            this.lblDescRL2.Text = "이하의 해상도를 가지는 이미지는 다운로드 받지 않습니다.";
             // 
             // frmAddtnlOptions
             // 
@@ -73,6 +125,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(475, 459);
+            this.Controls.Add(this.lblDescRL2);
+            this.Controls.Add(this.txtResolutionLowerHeight);
+            this.Controls.Add(this.lblDescRL1);
+            this.Controls.Add(this.txtResolutionLowerWidth);
+            this.Controls.Add(this.chkResolutionLowerLimit);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -82,6 +139,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -90,5 +148,10 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox chkResolutionLowerLimit;
+        private System.Windows.Forms.TextBox txtResolutionLowerWidth;
+        private System.Windows.Forms.Label lblDescRL1;
+        private System.Windows.Forms.TextBox txtResolutionLowerHeight;
+        private System.Windows.Forms.Label lblDescRL2;
     }
 }

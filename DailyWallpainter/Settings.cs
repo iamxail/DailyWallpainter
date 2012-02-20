@@ -234,29 +234,23 @@ namespace DailyWallpainter
             }
         }
 
-        public Size ResolutionLowerLimit
+        public SizeWithState ResolutionLowerLimit
         {
             get
             {
                 try
                 {
-                    var raw = Get("ResolutionLowerLimit");
-                    var splitted = raw.Split('x');
-
-                    if (splitted.Length == 2)
-                    {
-                        return new Size(int.Parse(splitted[0]), int.Parse(splitted[1]));
-                    }
+                    return SizeWithState.FromString(Get("ResolutionLowerLimit"));
                 }
                 catch
                 {
                 }
 
-                return new Size(700, 500);
+                return new SizeWithState(true, 700, 500);
             }
             set
             {
-                Set("ResolutionLowerLimit", value.Width.ToString() + "x" + value.Height.ToString());
+                Set("ResolutionLowerLimit", value.ToString());
             }
         }
 
@@ -345,6 +339,57 @@ namespace DailyWallpainter
             catch
             {
             }
+        }
+    }
+
+    public class SizeWithState
+    {
+        public bool Enabled { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        public SizeWithState(bool enabled, int width, int height)
+        {
+            Enabled = enabled;
+            Width = width;
+            Height = height;
+        }
+
+        public override string ToString()
+        {
+            return Enabled.ToString() + "," + Width.ToString() + "x" + Height.ToString();
+        }
+
+        public static SizeWithState FromString(string source)
+        {
+            var enabledAndSize = source.Split(',');
+            if (enabledAndSize.Length != 2)
+            {
+                throw new ArgumentException();
+            }
+
+            bool enabled;
+            if (bool.TryParse(enabledAndSize[0], out enabled) == false)
+            {
+                throw new ArgumentException();
+            }
+
+            var widthAndHeight = enabledAndSize[1].Split('x');
+            if (widthAndHeight.Length != 2)
+            {
+                throw new ArgumentException();
+            }
+
+            int width;
+            int height;
+
+            if (int.TryParse(widthAndHeight[0], out width) == false
+                || int.TryParse(widthAndHeight[1], out height) == false)
+            {
+                throw new ArgumentException();
+            }
+
+            return new SizeWithState(enabled, width, height);
         }
     }
 }
