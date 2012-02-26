@@ -21,9 +21,9 @@ namespace DailyWallpainter.Helpers
         public static void Change(string path)
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey("Control Panel\\Desktop", true);
-            //centered
+            //tiled (for multiscreen)
             key.SetValue(@"WallpaperStyle", "1");
-            key.SetValue(@"TileWallpaper", "0");
+            key.SetValue(@"TileWallpaper", "1");
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
         }

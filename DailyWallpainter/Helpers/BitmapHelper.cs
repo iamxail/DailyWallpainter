@@ -27,6 +27,33 @@ namespace DailyWallpainter.Helpers
             }
         }
 
+        public static void DrawImageFitOutside(this Graphics g, Image image, Rectangle destRect)
+        {
+            //below calculation is different from ResizeToFitOutside
+            Rectangle srcRect;
+            if ((float)image.Width / (float)image.Height > (float)destRect.Width / (float)destRect.Height)
+            {
+                int newWidth = (int)((float)destRect.Width / (float)destRect.Height * (float)image.Height);
+
+                srcRect = new Rectangle((image.Width - newWidth) / 2, 0, newWidth, image.Height);
+            }
+            else
+            {
+                int newHeight = (int)((float)destRect.Height / (float)destRect.Width * (float)image.Width);
+
+                srcRect = new Rectangle(0, (image.Height - newHeight) / 2, image.Width, newHeight);
+            }
+
+            g.DrawImage(image, destRect, srcRect, GraphicsUnit.Pixel);
+        }
+
+        public static void SetHighQuality(this Graphics g)
+        {
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+        }
+
         public static Bitmap ResizeToFitOutside(this Bitmap target, int width, int height)
         {
             try
@@ -35,9 +62,7 @@ namespace DailyWallpainter.Helpers
 
                 using (var g = Graphics.FromImage(result))
                 {
-                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                    g.SetHighQuality();
 
                     Rectangle rect;
                     if ((float)width / (float)height > (float)target.Width / (float)target.Height)
