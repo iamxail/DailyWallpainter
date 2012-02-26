@@ -24,6 +24,16 @@ namespace DailyWallpainter.UI
             txtResolutionLowerWidth.Text = RLowerLimit.Width.ToString();
             txtResolutionLowerHeight.Text = RLowerLimit.Height.ToString();
 
+            if (s.IsStretchForMultiScreen)
+            {
+                rdoMultiScreenStrectch.Checked = true;
+            }
+            else
+            {
+                rdoMultiScreenEach.Checked = true;
+            }
+            chkMultiScreenStretchCheckRatio.Checked = s.IsCheckRatioWhenStretch;
+
             initialized = true;
         }
 
@@ -80,6 +90,24 @@ namespace DailyWallpainter.UI
             else
             {
                 s.ResolutionLowerLimit = new SizeWithState(chkResolutionLowerLimit.Checked, int.Parse(txtResolutionLowerWidth.Text), result);
+            }
+        }
+
+        private void rdoMultiScreenStrectch_CheckedChanged(object sender, EventArgs e)
+        {
+            chkMultiScreenStretchCheckRatio.Enabled = rdoMultiScreenStrectch.Checked;
+
+            if (initialized)
+            {
+                s.IsStretchForMultiScreen = rdoMultiScreenStrectch.Checked;
+            }
+        }
+
+        private void chkMultiScreenStretchCheckRatio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initialized)
+            {
+                s.IsCheckRatioWhenStretch = chkMultiScreenStretchCheckRatio.Checked;
             }
         }
     }

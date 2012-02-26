@@ -203,18 +203,7 @@ namespace DailyWallpainter
         {
             get
             {
-                string checkStartup = Get("IsCheckOnlyWhenStartup");
-                bool parsed;
-
-                if (checkStartup == ""
-                    || bool.TryParse(checkStartup, out parsed) == false)
-                {
-                    return false;
-                }
-                else
-                {
-                    return parsed;
-                }
+                return GetBoolean("IsCheckOnlyWhenStartup", false);
             }
             set
             {
@@ -251,6 +240,30 @@ namespace DailyWallpainter
             set
             {
                 Set("ResolutionLowerLimit", value.ToString());
+            }
+        }
+
+        public bool IsStretchForMultiScreen
+        {
+            get
+            {
+                return GetBoolean("IsStretchForMultiScreen", true);
+            }
+            set
+            {
+                Set("IsStretchForMultiScreen", value.ToString());
+            }
+        }
+
+        public bool IsCheckRatioWhenStretch
+        {
+            get
+            {
+                return GetBoolean("IsCheckRatioWhenStretch", true);
+            }
+            set
+            {
+                Set("IsCheckRatioWhenStretch", value.ToString());
             }
         }
 
@@ -320,6 +333,22 @@ namespace DailyWallpainter
             }
 
             return result;
+        }
+
+        public bool GetBoolean(string name, bool defaultValue)
+        {
+            string value = Get(name);
+            bool parsed;
+
+            if (value == ""
+                || bool.TryParse(value, out parsed) == false)
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return parsed;
+            }
         }
 
         public void Set(string name, string value)

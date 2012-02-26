@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Helpers\BitmapHelper.cs" />
     <Compile Include="Helpers\ExtensionMethodHack.cs" />
+    <Compile Include="Helpers\ScreenInfo.cs" />
     <Compile Include="Helpers\SingleInstanceProgram.cs" />
     <Compile Include="MainApplicationContext.cs" />
     <Compile Include="UI\frmAddtnlOptions.cs">

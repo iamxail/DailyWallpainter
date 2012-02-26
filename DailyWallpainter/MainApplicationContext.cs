@@ -245,15 +245,34 @@ namespace DailyWallpainter
                     {
                         data.SaveBitmap(s.SaveFolder, source.Name);
 
+                        var allScreen = new MultiScreenInfo();
+
+                        desktop = new Bitmap(allScreen.VirtualDesktop.Width, allScreen.VirtualDesktop.Height);
+
                         using (var ms = new MemoryStream(data))
-                        using (var bitmap = new Bitmap(ms))
+                        using (var bmpDownload = new Bitmap(ms))
+                        using (var gDesktop = Graphics.FromImage(desktop))
                         {
                             var RsltnLowerLimit = s.ResolutionLowerLimit;
                             if (RsltnLowerLimit.Enabled == false
-                                || (bitmap.Width > RsltnLowerLimit.Width && bitmap.Height > RsltnLowerLimit.Height))
+                                || (bmpDownload.Width > RsltnLowerLimit.Width && bmpDownload.Height > RsltnLowerLimit.Height))
                             {
-                                desktop = bitmap.ResizeToFitOutside(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
-                                appBg = bitmap.Crop(0, 0, 100, 165);
+                                gDesktop.SetHighQuality();
+
+                                if (s.IsStretchForMultiScreen == false
+                                    || (s.IsCheckRatioWhenStretch && allScreen.IsPreferredToStretch(bmpDownload.Size) == false))
+                                {
+                                    foreach (var scr in allScreen.AllScreens)
+                                    {
+                                        gDesktop.DrawImageFitOutside(bmpDownload, scr.AdjustedBounds);
+                                    }
+                                }
+                                else
+                                {
+                                    gDesktop.DrawImageFitOutside(bmpDownload, allScreen.AdjustedVirtualDesktop);
+                                }
+
+                                appBg = bmpDownload.Crop(0, 0, 100, 165);
                             }
                         }
 
@@ -314,4 +333,3 @@ namespace DailyWallpainter
         }
     }
 }
-
