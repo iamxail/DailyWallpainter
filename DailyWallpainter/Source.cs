@@ -115,11 +115,11 @@ namespace DailyWallpainter
         }
     }
 
-    public class SourcesCollection : IEnumerable<Source>
+    public class SourceCollection : IEnumerable<Source>
     {
         protected List<Source> list;
 
-        internal SourcesCollection()
+        internal SourceCollection()
         {
             if (list == null)
             {
@@ -129,7 +129,7 @@ namespace DailyWallpainter
             Initialize();
         }
 
-        internal SourcesCollection(string from)
+        internal SourceCollection(string from)
         {
             list = new List<Source>(Source.GetSourcesFromString(from));
         }
@@ -223,7 +223,7 @@ namespace DailyWallpainter
 
         public void Save()
         {
-            Settings.Instance.Set("Sources", this.ToString());
+            Settings.Set("Sources", this.ToString());
         }
 
         public IEnumerator<Source> GetEnumerator()

@@ -11,6 +11,10 @@ namespace DailyWallpainter
 {
     public class Settings
     {
+        private static readonly string appName = Program.Name;
+        private static readonly string appKey = @"Software\xail\" + appName;
+        private static readonly string startupKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+
         static readonly Settings instance = new Settings();
 
         static Settings()
@@ -26,13 +30,10 @@ namespace DailyWallpainter
             }
         }
 
-        private const string appName = Program.Name;
-        private readonly string appKey = @"Software\xail\" + appName;
-        private const string startupKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
         private readonly string DefaultSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), appName);
         private readonly int DefaultIntervalInMinute = 360;
 
-        protected SourcesCollection sources;
+        protected SourceCollection sources;
         protected bool initial;
 
         public Settings()
@@ -87,13 +88,13 @@ namespace DailyWallpainter
             RunOnStartup = true;
         }
 
-        public SourcesCollection Sources
+        public SourceCollection Sources
         {
             get
             {
                 if (sources == null)
                 {
-                    sources = new SourcesCollection(Get("Sources"));
+                    sources = new SourceCollection(Get("Sources"));
                 }
 
                 return sources;
@@ -287,12 +288,12 @@ namespace DailyWallpainter
             }
         }*/
 
-        protected RegistryKey GetKey()
+        private static RegistryKey GetKey()
         {
             return GetKey(appKey);
         }
 
-        protected RegistryKey GetKey(string keyPath)
+        private static RegistryKey GetKey(string keyPath)
         {
             RegistryKey key;
             try
@@ -312,12 +313,12 @@ namespace DailyWallpainter
             return key;
         }
 
-        public string Get(string name)
+        public static string Get(string name)
         {
             return Get(appKey, name);
         }
 
-        public string Get(string keyPath, string name)
+        public static string Get(string keyPath, string name)
         {
             string result = "";
 
@@ -335,7 +336,7 @@ namespace DailyWallpainter
             return result;
         }
 
-        public bool GetBoolean(string name, bool defaultValue)
+        public static bool GetBoolean(string name, bool defaultValue)
         {
             string value = Get(name);
             bool parsed;
@@ -351,12 +352,12 @@ namespace DailyWallpainter
             }
         }
 
-        public void Set(string name, string value)
+        public static void Set(string name, string value)
         {
             Set(appKey, name, value);
         }
 
-        public void Set(string keyPath, string name, string value)
+        public static void Set(string keyPath, string name, string value)
         {
             try
             {
