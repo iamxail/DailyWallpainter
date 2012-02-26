@@ -48,8 +48,16 @@
   <ItemGroup>
     <Compile Include="Helpers\BitmapHelper.cs" />
     <Compile Include="Helpers\ExtensionMethodHack.cs" />
+    <Compile Include="Helpers\ScreenInfo.cs" />
     <Compile Include="Helpers\SingleInstanceProgram.cs" />
-    <Compile Include="UpdateChecker\UpdateChecker.cs" />
+    <Compile Include="MainApplicationContext.cs" />
+    <Compile Include="UI\frmAddtnlOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\frmAddtnlOptions.Designer.cs">
+      <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateChecker\GitHubUpdateChecker.cs" />
     <Compile Include="UI\frmEditSource.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,6 +76,9 @@
     <Compile Include="Source.cs" />
     <Compile Include="UI\TrayIcon.cs" />
     <Compile Include="Helpers\Wallpaper.cs" />
+    <EmbeddedResource Include="UI\frmAddtnlOptions.resx">
+      <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\frmEditSource.resx">
       <DependentUpon>frmEditSource.cs</DependentUpon>
     </EmbeddedResource>

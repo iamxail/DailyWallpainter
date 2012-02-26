@@ -61,7 +61,7 @@ namespace DailyWallpainter.UI
 
         private static void mitShowSettings_Click(object sender, EventArgs e)
         {
-            Program.ShowSettings();
+            Program.Context.ShowSettings();
         }
 
         private static void mitExit_Click(object sender, EventArgs e)
@@ -73,7 +73,7 @@ namespace DailyWallpainter.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                Program.ShowSettings();
+                Program.Context.ShowSettings();
             }
         }
 
@@ -93,9 +93,15 @@ namespace DailyWallpainter.UI
         {
             if (disposing)
             {
-                ntfTray.Visible = false;
+                if (ntfTray != null)
+                {
+                    var tray = ntfTray;
+                    ntfTray = null;
 
-                ntfTray.Dispose();
+                    tray.Visible = false;
+                    tray.Dispose();
+                }
+
                 mnuTray.Dispose();
                 mitShowSettings.Dispose();
                 toolStripMenuItem1.Dispose();

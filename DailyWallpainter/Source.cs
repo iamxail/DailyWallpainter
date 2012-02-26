@@ -37,21 +37,28 @@ namespace DailyWallpainter
 
         public static Source[] GetSourcesFromString(string sourcesString)
         {
-            var splitted = sourcesString.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            var sources = new List<Source>();
-
-            for (int i = 0; i < splitted.Length - 1; i += 5)
+            try
             {
-                var regexpSplitted = splitted[i + 2].Split('\t');
-                if (regexpSplitted.Length == 1)
+                var splitted = sourcesString.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                var sources = new List<Source>();
+
+                for (int i = 0; i < splitted.Length - 1; i += 5)
                 {
-                    regexpSplitted = new string[] { regexpSplitted[0], "$1" };
+                    var regexpSplitted = splitted[i + 2].Split('\t');
+                    if (regexpSplitted.Length == 1)
+                    {
+                        regexpSplitted = new string[] { regexpSplitted[0], "$1" };
+                    }
+
+                    sources.Add(new Source(splitted[i], splitted[i + 1], regexpSplitted[0], regexpSplitted[1], Convert.ToBoolean(splitted[i + 3]), splitted[i + 4]));
                 }
 
-                sources.Add(new Source(splitted[i], splitted[i + 1], regexpSplitted[0], regexpSplitted[1], Convert.ToBoolean(splitted[i + 3]), splitted[i + 4]));
+                return sources.ToArray();
             }
-
-            return sources.ToArray();
+            catch
+            {
+                return new Source[0];
+            }
         }
 
         protected string name;
@@ -108,33 +115,32 @@ namespace DailyWallpainter
         }
     }
 
-    public class SourcesCollection : IEnumerable<Source>
+    public class SourceCollection : IEnumerable<Source>
     {
         protected List<Source> list;
 
-        internal SourcesCollection()
+        internal SourceCollection()
         {
             if (list == null)
             {
                 list = new List<Source>();
             }
 
-            InitializeInternal();
+            Initialize();
         }
 
-        internal SourcesCollection(string from) : this()
+        internal SourceCollection(string from)
         {
             list = new List<Source>(Source.GetSourcesFromString(from));
         }
 
-        public void ForceInitialize()
+        public void Initialize(bool force = false)
         {
-            list.Clear();
-            InitializeInternal();
-        }
+            if (force)
+            {
+                list.Clear();
+            }
 
-        private void InitializeInternal()
-        {
             if (list.Count <= 0)
             {
                 AddRange(new Source[] {
@@ -217,7 +223,7 @@ namespace DailyWallpainter
 
         public void Save()
         {
-            Settings.Instance.Set("Sources", this.ToString());
+            Settings.Set("Sources", this.ToString());
         }
 
         public IEnumerator<Source> GetEnumerator()

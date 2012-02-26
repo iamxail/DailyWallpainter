@@ -42,7 +42,7 @@ namespace DailyWallpainter.UI
 
             RefreshSources();
             
-            string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Daily Wallpainter\appbg.bmp");
+            string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Program.Name + @"\appbg.bmp");
             if (File.Exists(appBgPath))
             {
                 try
@@ -60,12 +60,30 @@ namespace DailyWallpainter.UI
 
             rdoCheckOnlyStart.Checked = s.IsCheckOnlyWhenStartup;
 
-            if (Program.IsNewVersionAvailable)
-            {
-                lnkDownloadUpdate.Visible = true;
-            }
-
             initialized = true;
+        }
+
+        public void NotifyNewVersion()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(NotifyNewVersion));
+            }
+            else
+            {
+                if (Program.Context.IsNeededToNotifyNewVersion)
+                {
+                    s.LastestVersionInformed = Program.Context.LatestVersion;
+
+                    lnkDownloadUpdate.Visible = true;
+
+                    if (MessageBox.Show(this, Program.Name + "가 새 " + Program.Context.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", Program.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        lnkDownloadUpdate_LinkClicked(this, null);
+                    }
+                }
+            }
         }
 
         private void RefreshSources()
@@ -126,7 +144,7 @@ namespace DailyWallpainter.UI
 
             var target = s.Sources[i];
 
-            if (MessageBox.Show("이 소스를 정말 삭제하시겠습니까?\r\n\r\n" + target.Name, "Daily Wallpainter", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            if (MessageBox.Show("이 소스를 정말 삭제하시겠습니까?\r\n\r\n" + target.Name, Program.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                 == System.Windows.Forms.DialogResult.Yes)
             {
                 s.Sources.RemoveAt(i);
@@ -178,7 +196,7 @@ namespace DailyWallpainter.UI
                     {
                         string testPath = Path.Combine(path, "YouCanDeleteThisFileWhenever");
 
-                        File.WriteAllText(testPath, "Temp file created by Daily Wallpainter");
+                        File.WriteAllText(testPath, "Temp file created by " + Program.Name);
                         File.Delete(testPath);
 
                         lnkSaveFolder.Text = path;
@@ -186,7 +204,7 @@ namespace DailyWallpainter.UI
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        MessageBox.Show("이 폴더에 접근할 권한이 없습니다. 다른 폴더를 지정해주세요.\r\n\r\n" + path, "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("이 폴더에 접근할 권한이 없습니다. 다른 폴더를 지정해주세요.\r\n\r\n" + path, Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -239,7 +257,7 @@ namespace DailyWallpainter.UI
             if (int.TryParse(txtInterval.Text, out result) == false
                 || result <= 0)
             {
-                MessageBox.Show("새 배경화면 확인 시간 간격은 0 보다 큰 정수만 입력할 수 있습니다.", "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("새 배경화면 확인 시간 간격은 0 보다 큰 정수만 입력할 수 있습니다.", Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 txtInterval.Focus();
                 txtInterval.SelectAll();
@@ -261,7 +279,7 @@ namespace DailyWallpainter.UI
 
             if (initialized)
             {
-                MessageBox.Show("이 설정은 다음 시작할 때부터 적용됩니다.", "Daily Wallpainter", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("이 설정은 다음 시작할 때부터 적용됩니다.", Program.Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -273,16 +291,14 @@ namespace DailyWallpainter.UI
 
         private void frmSettings_Shown(object sender, EventArgs e)
         {
-            if (Program.IsNewVersionAvailable
-                && Program.LatestVersion != s.LastestVersionInformed)
-            {
-                if (MessageBox.Show("Daily Wallpainter가 새 " + Program.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", "Daily Wallpainter", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                    == System.Windows.Forms.DialogResult.Yes)
-                {
-                    lnkDownloadUpdate_LinkClicked(this, null);
-                }
+            NotifyNewVersion();
+        }
 
-                s.LastestVersionInformed = Program.LatestVersion;
+        private void btnAddtnlOptions_Click(object sender, EventArgs e)
+        {
+            using (var addopts = new frmAddtnlOptions())
+            {
+                addopts.ShowDialog(this);
             }
         }
     }

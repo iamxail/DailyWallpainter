@@ -5,11 +5,16 @@ using Microsoft.Win32;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace DailyWallpainter
 {
     public class Settings
     {
+        private static readonly string appName = Program.Name;
+        private static readonly string appKey = @"Software\xail\" + appName;
+        private static readonly string startupKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+
         static readonly Settings instance = new Settings();
 
         static Settings()
@@ -25,13 +30,10 @@ namespace DailyWallpainter
             }
         }
 
-        private const string appName = @"Daily Wallpainter";
-        private readonly string appKey = @"Software\xail\" + appName;
-        private const string startupKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
         private readonly string DefaultSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), appName);
         private readonly int DefaultIntervalInMinute = 360;
 
-        protected SourcesCollection sources;
+        protected SourceCollection sources;
         protected bool initial;
 
         public Settings()
@@ -56,8 +58,12 @@ namespace DailyWallpainter
         {
             switch (settingsVersion)
             {
+                case "":
+                    //initially installed
+                    break;
+
                 case "1.0.0.0":
-                    Sources.ForceInitialize();
+                    Sources.Initialize(true);
                     Set("IntervalInMinute", "360");
                     goto case "1.1.0.0";
 
@@ -66,9 +72,15 @@ namespace DailyWallpainter
                     {
                         RunOnStartup = true;
                     }
+                    goto case "1.3.0.0";
+
+                //1.2 is not released
+
+                case "1.3.0.0":
+                    //do nothing
                     break;
 
-                default:
+                default: //maybe settings of higher version is detected
                     //do nothing
                     break;
             }
@@ -76,13 +88,13 @@ namespace DailyWallpainter
             RunOnStartup = true;
         }
 
-        public SourcesCollection Sources
+        public SourceCollection Sources
         {
             get
             {
                 if (sources == null)
                 {
-                    sources = new SourcesCollection(Get("Sources"));
+                    sources = new SourceCollection(Get("Sources"));
                 }
 
                 return sources;
@@ -192,18 +204,7 @@ namespace DailyWallpainter
         {
             get
             {
-                string checkStartup = Get("IsCheckOnlyWhenStartup");
-                bool parsed;
-
-                if (checkStartup == ""
-                    || bool.TryParse(checkStartup, out parsed) == false)
-                {
-                    return false;
-                }
-                else
-                {
-                    return parsed;
-                }
+                return GetBoolean("IsCheckOnlyWhenStartup", false);
             }
             set
             {
@@ -220,6 +221,50 @@ namespace DailyWallpainter
             set
             {
                 Set("LastestVersionInformed", value);
+            }
+        }
+
+        public SizeWithState ResolutionLowerLimit
+        {
+            get
+            {
+                try
+                {
+                    return SizeWithState.FromString(Get("ResolutionLowerLimit"));
+                }
+                catch
+                {
+                }
+
+                return new SizeWithState(true, 700, 500);
+            }
+            set
+            {
+                Set("ResolutionLowerLimit", value.ToString());
+            }
+        }
+
+        public bool IsStretchForMultiScreen
+        {
+            get
+            {
+                return GetBoolean("IsStretchForMultiScreen", true);
+            }
+            set
+            {
+                Set("IsStretchForMultiScreen", value.ToString());
+            }
+        }
+
+        public bool IsCheckRatioWhenStretch
+        {
+            get
+            {
+                return GetBoolean("IsCheckRatioWhenStretch", true);
+            }
+            set
+            {
+                Set("IsCheckRatioWhenStretch", value.ToString());
             }
         }
 
@@ -243,12 +288,12 @@ namespace DailyWallpainter
             }
         }*/
 
-        protected RegistryKey GetKey()
+        private static RegistryKey GetKey()
         {
             return GetKey(appKey);
         }
 
-        protected RegistryKey GetKey(string keyPath)
+        private static RegistryKey GetKey(string keyPath)
         {
             RegistryKey key;
             try
@@ -268,12 +313,12 @@ namespace DailyWallpainter
             return key;
         }
 
-        public string Get(string name)
+        public static string Get(string name)
         {
             return Get(appKey, name);
         }
 
-        public string Get(string keyPath, string name)
+        public static string Get(string keyPath, string name)
         {
             string result = "";
 
@@ -291,12 +336,28 @@ namespace DailyWallpainter
             return result;
         }
 
-        public void Set(string name, string value)
+        public static bool GetBoolean(string name, bool defaultValue)
+        {
+            string value = Get(name);
+            bool parsed;
+
+            if (value == ""
+                || bool.TryParse(value, out parsed) == false)
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return parsed;
+            }
+        }
+
+        public static void Set(string name, string value)
         {
             Set(appKey, name, value);
         }
 
-        public void Set(string keyPath, string name, string value)
+        public static void Set(string keyPath, string name, string value)
         {
             try
             {
@@ -308,6 +369,57 @@ namespace DailyWallpainter
             catch
             {
             }
+        }
+    }
+
+    public class SizeWithState
+    {
+        public bool Enabled { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        public SizeWithState(bool enabled, int width, int height)
+        {
+            Enabled = enabled;
+            Width = width;
+            Height = height;
+        }
+
+        public override string ToString()
+        {
+            return Enabled.ToString() + "," + Width.ToString() + "x" + Height.ToString();
+        }
+
+        public static SizeWithState FromString(string source)
+        {
+            var enabledAndSize = source.Split(',');
+            if (enabledAndSize.Length != 2)
+            {
+                throw new ArgumentException();
+            }
+
+            bool enabled;
+            if (bool.TryParse(enabledAndSize[0], out enabled) == false)
+            {
+                throw new ArgumentException();
+            }
+
+            var widthAndHeight = enabledAndSize[1].Split('x');
+            if (widthAndHeight.Length != 2)
+            {
+                throw new ArgumentException();
+            }
+
+            int width;
+            int height;
+
+            if (int.TryParse(widthAndHeight[0], out width) == false
+                || int.TryParse(widthAndHeight[1], out height) == false)
+            {
+                throw new ArgumentException();
+            }
+
+            return new SizeWithState(enabled, width, height);
         }
     }
 }
