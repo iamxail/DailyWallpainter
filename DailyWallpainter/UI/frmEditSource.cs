@@ -11,9 +11,9 @@ using System.IO;
 
 namespace DailyWallpainter.UI
 {
-    public partial class frmEditSource : Form
+    public partial class frmEditSource : BaseForm
     {
-        public frmEditSource()
+        public frmEditSource() : base()
         {
             InitializeComponent();
         }

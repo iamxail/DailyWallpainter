@@ -54,6 +54,12 @@
     <Compile Include="Core\MainApplicationContext.cs" />
     <Compile Include="Core\SourceBitmap.cs" />
     <Compile Include="Core\SourceCollection.cs" />
+    <Compile Include="UI\BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\frmAddtnlOptions.cs">
       <SubType>Form</SubType>
     </Compile>

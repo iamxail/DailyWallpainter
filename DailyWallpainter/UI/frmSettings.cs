@@ -10,22 +10,17 @@ using System.IO;
 
 namespace DailyWallpainter.UI
 {
-    public partial class frmSettings : Form
+    public partial class frmSettings : BaseForm
     {
         private Settings s = Settings.Instance;
         private bool refreshingSource = false;
         private bool initialized;
 
-        public frmSettings()
+        public frmSettings() : base()
         {
             initialized = false;
 
             InitializeComponent();
-
-            if (Environment.OSVersion.Version.Major >= 6)
-            {
-                this.Font = new Font("맑은 고딕", 9);
-            }
 
             /*int daysToSave = s.DaysToSave;
             if (daysToSave == 0)

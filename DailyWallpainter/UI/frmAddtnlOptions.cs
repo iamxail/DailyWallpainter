@@ -8,12 +8,12 @@ using System.Windows.Forms;
 
 namespace DailyWallpainter.UI
 {
-    public partial class frmAddtnlOptions : Form
+    public partial class frmAddtnlOptions : BaseForm
     {
         private Settings s = Settings.Instance;
         private bool initialized;
 
-        public frmAddtnlOptions()
+        public frmAddtnlOptions() : base()
         {
             initialized = false;
 
