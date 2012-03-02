@@ -85,18 +85,10 @@ namespace DailyWallpainter
 
         private bool IsNeededToShowSettings()
         {
-            bool StartByWindows = false;
-            foreach (var arg in Environment.GetCommandLineArgs())
-            {
-                if (StartByWindows == false
-                    && arg.ToLower() == "/winstart")
-                {
-                    StartByWindows = true;
-                }
-            }
+            bool StartedByWindows = Program.ArgumentExists("/winstart");
 
             return s.InitialStart
-                || StartByWindows == false;
+                || StartedByWindows == false;
         }
 
         private void updateChecker_CheckCompleted(object sender, CheckCompletedEventArgs e)
