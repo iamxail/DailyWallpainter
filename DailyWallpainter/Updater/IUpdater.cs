@@ -6,7 +6,7 @@ namespace DailyWallpainter.Updater
         void CheckAsync();
         void CheckAsync(object userState);
 
-        void Update();
+        void Update(bool silent);
 
         event CheckCompletedEventHandler CheckCompleted;
 

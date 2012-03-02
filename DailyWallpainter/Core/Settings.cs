@@ -268,6 +268,18 @@ namespace DailyWallpainter
             }
         }
 
+        public bool IsSilentUpdate
+        {
+            get
+            {
+                return GetBoolean("IsSilentUpdate", true);
+            }
+            set
+            {
+                Set("IsSilentUpdate", value.ToString());
+            }
+        }
+
         /*public int DaysToSave
         {
             get

@@ -4,6 +4,7 @@ using System.Text;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using DailyWallpainter.Helpers;
 
 namespace DailyWallpainter.Updater
 {
@@ -17,32 +18,25 @@ namespace DailyWallpainter.Updater
 
             IsChecked = false;
             IsNewVersionAvailable = false;
-            LatestVersion = GetMajorDotMinorVersion();
+            LatestVersion = Program.Version;
         }
 
         public string Username { get; protected set; }
         public string RepositoryName { get; protected set; }
         public string Filename { get; protected set; }
-        public string LatestVersion { get; protected set; }
-        public bool IsNewVersionAvailable { get; protected set; }
-        public bool IsChecked { get; protected set; }
-        public event CheckCompletedEventHandler CheckCompleted;
+        public override string LatestVersion { get; protected set; }
+        public override bool IsNewVersionAvailable { get; protected set; }
+        public override bool IsChecked { get; protected set; }
+        public override event CheckCompletedEventHandler CheckCompleted;
 
         protected string newExeUrl;
 
-        private string GetMajorDotMinorVersion()
-        {
-            var ver = Assembly.GetEntryAssembly().GetName().Version;
-
-            return ver.Major.ToString() + "." + ver.Minor.ToString();
-        }
-
-        public void CheckAsync()
+        public override void CheckAsync()
         {
             CheckAsync(null);
         }
 
-        public void CheckAsync(object userState)
+        public override void CheckAsync(object userState)
         {
             var client = new WebClient();
             client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
@@ -67,7 +61,6 @@ namespace DailyWallpainter.Updater
                 var downloadsSplitted = regexSplitter.Split(downloads);
 
                 var regexFilename = new Regex("\"name\" *?: *?\"" + Filename + "\"[ .\r\n]*[,}]", RegexOptions.IgnoreCase);
-                var nowVer = GetMajorDotMinorVersion();
                 foreach (var download in downloadsSplitted)
                 {
                     if (regexFilename.IsMatch(download))
@@ -78,7 +71,7 @@ namespace DailyWallpainter.Updater
                         if (match.Success)
                         {
                             LatestVersion = match.Groups[1].Value;
-                            IsNewVersionAvailable = (LatestVersion != nowVer);
+                            IsNewVersionAvailable = (LatestVersion != Program.Version);
 
                             var regexUrl = new Regex("\"html_url\" *?: *?\"(.*?)\"", RegexOptions.IgnoreCase);
                             var matchUrl = regexUrl.Match(download);
@@ -96,6 +89,9 @@ namespace DailyWallpainter.Updater
             catch (Exception thrown)
             {
                 ex = thrown;
+
+                IsNewVersionAvailable = false;
+                LatestVersion = Program.Version;
             }
             finally
             {
@@ -123,9 +119,9 @@ namespace DailyWallpainter.Updater
             }
         }
 
-        public void Update()
+        public override void Update(bool silent)
         {
-            Update(newExeUrl);
+            Update(newExeUrl, Program.SafeName + "_" + LatestVersion + ".exe", silent);
         }
     }
 }

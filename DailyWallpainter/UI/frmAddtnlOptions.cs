@@ -34,6 +34,8 @@ namespace DailyWallpainter.UI
             }
             chkMultiScreenStretchCheckRatio.Checked = s.IsCheckRatioWhenStretch;
 
+            chkSilentUpdate.Checked = s.IsSilentUpdate;
+
             initialized = true;
         }
 
@@ -108,6 +110,14 @@ namespace DailyWallpainter.UI
             if (initialized)
             {
                 s.IsCheckRatioWhenStretch = chkMultiScreenStretchCheckRatio.Checked;
+            }
+        }
+
+        private void chkSilentUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initialized)
+            {
+                s.IsSilentUpdate = chkSilentUpdate.Checked;
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using DailyWallpainter.Updater;
 
 namespace DailyWallpainter.UI
 {
@@ -15,6 +16,7 @@ namespace DailyWallpainter.UI
         private Settings s = Settings.Instance;
         private bool refreshingSource = false;
         private bool initialized;
+        private IUpdater updaterDelayed;
 
         public frmSettings() : base()
         {
@@ -59,11 +61,12 @@ namespace DailyWallpainter.UI
             initialized = true;
         }
 
-        public void NotifyNewVersion()
+        private delegate void NotifyNewVersionDelegate(IUpdater updater);
+        public void NotifyNewVersion(IUpdater updater)
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new MethodInvoker(NotifyNewVersion));
+                this.Invoke(new NotifyNewVersionDelegate(NotifyNewVersion), new object[] { updater });
             }
             else
             {
@@ -73,10 +76,16 @@ namespace DailyWallpainter.UI
 
                     lnkDownloadUpdate.Visible = true;
 
-                    if (MessageBox.Show(this, Program.Name + "가 새 " + Program.Context.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 다운로드 페이지를 여시겠습니까?", Program.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    if (MessageBox.Show(this, Program.Name + "가 새 " + Program.Context.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 업데이트 하시겠습니까?", Program.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == System.Windows.Forms.DialogResult.Yes)
                     {
-                        lnkDownloadUpdate_LinkClicked(this, null);
+                        this.Hide();
+
+                        updater.Update(false);
+                    }
+                    else
+                    {
+                        updaterDelayed = updater;
                     }
                 }
             }
@@ -281,13 +290,27 @@ namespace DailyWallpainter.UI
 
         private void lnkDownloadUpdate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(@"https://github.com/iamxail/DailyWallpainter#readme");
-            lnkDownloadUpdate.Visible = false;
-        }
+            if (updaterDelayed == null)
+            {
+                lnkDownloadUpdate.Visible = false;
+                return;
+            }
 
-        private void frmSettings_Shown(object sender, EventArgs e)
-        {
-            NotifyNewVersion();
+            switch (MessageBox.Show(this, "업데이트를 하는 동안 새 버전의 변경 사항을 확인하시겠습니까?\r\n\r\n취소를 누르면 업데이트를 중단합니다.", Program.Name, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+            {
+                case System.Windows.Forms.DialogResult.Yes:
+                    Process.Start(@"https://github.com/iamxail/DailyWallpainter#readme");
+                    break;
+
+                case System.Windows.Forms.DialogResult.No:
+                    break;
+
+                case System.Windows.Forms.DialogResult.Cancel:
+                    return;
+            }
+
+            lnkDownloadUpdate.Visible = false;
+            updaterDelayed.Update(true);
         }
 
         private void btnAddtnlOptions_Click(object sender, EventArgs e)

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using DailyWallpainter.Helpers;
 using System.IO;
+using System.Reflection;
 
 namespace DailyWallpainter
 {
@@ -13,6 +14,7 @@ namespace DailyWallpainter
         [STAThread]
         static void Main()
         {
+            //todo update when running is old version
             if (ArgumentExists("/forcestart") == false
                 && SingleInstanceProgram.IsSingleInstaced() == false)
             {
@@ -34,6 +36,7 @@ namespace DailyWallpainter
         public const string SafeName = "DailyWallpainter";
         public const string ExeName = SafeName + ".exe";
         public readonly static string AppData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Name);
+        public readonly static string Version = Assembly.GetEntryAssembly().GetName().Version.GetSimpleVersionString();
 
         public static bool ArgumentExists(string argToTest, bool ignoreCase = true)
         {

@@ -8,6 +8,7 @@ using DailyWallpainter.Helpers;
 using DailyWallpainter.Updater;
 using System.Drawing;
 using System.IO;
+using System.Diagnostics;
 
 namespace DailyWallpainter
 {
@@ -21,6 +22,7 @@ namespace DailyWallpainter
         private bool lastWorking;
         private readonly SynchronizationContext syncCntx;
         private TrayIcon tray;
+        private IUpdater updater;
 
         public MainApplicationContext()
         {
@@ -28,22 +30,34 @@ namespace DailyWallpainter
 
             syncCntx = new WindowsFormsSynchronizationContext();
 
+            var installer = new Installer(this);
+            if (installer.CheckNeedInstall())
+            {
+                installer.Install();
+
+                return;
+            }
+            installer = null;
+
             stopTimer = new ManualResetEvent(false);
             passTimer = new ManualResetEvent(true);
 
-            isNewVersionAvailable = false;
-            LatestVersion = string.Empty;
-
             lastWorking = s.IsCheckOnlyWhenStartup;
+
+            if (Program.ArgumentExists("/setstartup")
+                || s.InitialStart)
+            {
+                s.RunOnStartup = true;
+            }
 
             if (IsNeededToShowSettings())
             {
                 ShowSettings();
             }
 
-            IUpdater updateChecker = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
-            updateChecker.CheckCompleted += new CheckCompletedEventHandler(updateChecker_CheckCompleted);
-            updateChecker.CheckAsync(updateChecker);
+            updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
+            updater.CheckCompleted += new CheckCompletedEventHandler(updateChecker_CheckCompleted);
+            updater.CheckAsync();
 
             tmrDownload = new System.Timers.Timer();
             tmrDownload.Interval = 5000;
@@ -93,45 +107,47 @@ namespace DailyWallpainter
 
         private void updateChecker_CheckCompleted(object sender, CheckCompletedEventArgs e)
         {
-            if (e.Error == null)
+            try
             {
-                var updateChecker = e.UserState as GitHubUpdater;
-
-                LatestVersion = updateChecker.LatestVersion;
-                isNewVersionAvailable = updateChecker.IsNewVersionAvailable;
-            }
-            else
-            {
-                isNewVersionAvailable = false;
-                LatestVersion = string.Empty;
-            }
-
-            if (IsNeededToNotifyNewVersion)
-            {
-                if (IsfrmSettingAvailable)
+                if (IsNeededToNotifyNewVersion)
                 {
-                    set.NotifyNewVersion();
-                }
-                else
-                {
-                    ShowSettings();
+                    if (IsfrmSettingAvailable)
+                    {
+                        set.NotifyNewVersion(updater);
+                    }
+                    else
+                    {
+                        if (s.IsSilentUpdate)
+                        {
+                            updater.Update(true);
+                        }
+                        else
+                        {
+                            ShowSettings();
+                        }
+                    }
                 }
             }
-            else if (IsfrmSettingAvailable == false)
+            catch
             {
-                passTimer.Reset();
+            }
+            finally
+            {
+                if (IsfrmSettingAvailable == false)
+                {
+                    passTimer.Reset();
+                }
             }
         }
 
-        private bool isNewVersionAvailable;
-        public string LatestVersion { get; private set; }
+        public string LatestVersion { get { return updater.LatestVersion; } }
 
         public bool IsNeededToNotifyNewVersion
         {
             get
             {
-                return isNewVersionAvailable
-                    && LatestVersion != s.LastestVersionInformed;
+                return updater.IsNewVersionAvailable
+                    && updater.LatestVersion != s.LastestVersionInformed;
             }
         }
 
@@ -171,6 +187,7 @@ namespace DailyWallpainter
                     this.BeginInvoke(new MethodInvoker(() =>
                     {
                         set = new frmSettings();
+                        set.Shown += new EventHandler(frmSettings_Shown);
                         set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
 
                         set.Show();
@@ -180,6 +197,7 @@ namespace DailyWallpainter
                 else
                 {
                     set = new frmSettings();
+                    set.Shown += new EventHandler(frmSettings_Shown);
                     set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
 
                     set.Show();
@@ -188,7 +206,7 @@ namespace DailyWallpainter
             }
         }
 
-        private bool InvokeRequired
+        public bool InvokeRequired
         {
             get
             {
@@ -197,14 +215,22 @@ namespace DailyWallpainter
         }
 
         //from http://nosuchblogger.com/post/60/applicationcontext-and-the-ui-thread
-        private void BeginInvoke(Delegate callback, object[] args)
+        public void BeginInvoke(Delegate callback, object[] args)
         {
             syncCntx.Post(state => callback.DynamicInvoke(state as object[]), args);
         }
 
-        private void BeginInvoke(Delegate callback)
+        public void BeginInvoke(Delegate callback)
         {
             BeginInvoke(callback, null);
+        }
+
+        private void frmSettings_Shown(object sender, EventArgs e)
+        {
+            if (IsNeededToNotifyNewVersion)
+            {
+                set.NotifyNewVersion(updater);
+            }
         }
 
         private void frmSettings_FormClosed(object sender, FormClosedEventArgs e)
@@ -216,6 +242,14 @@ namespace DailyWallpainter
             }
 
             passTimer.Reset();
+        }
+
+        public TrayIcon TrayIcon
+        {
+            get
+            {
+                return tray;
+            }
         }
 
         private void tmrDownload_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
