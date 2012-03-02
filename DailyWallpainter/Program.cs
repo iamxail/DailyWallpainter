@@ -34,13 +34,28 @@ namespace DailyWallpainter
         public const string ExeName = SafeName + ".exe";
         public readonly static string AppData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Name);
 
-        public static bool ArgumentExists(string argToTest)
+        public static bool ArgumentExists(string argToTest, bool ignoreCase = true)
         {
-            foreach (var arg in Environment.GetCommandLineArgs())
+            if (ignoreCase)
             {
-                if (arg.ToLower() == argToTest)
+                string argToTestCase = argToTest.ToLower();
+
+                foreach (var arg in Environment.GetCommandLineArgs())
                 {
-                    return true;
+                    if (arg.ToLower() == argToTestCase)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var arg in Environment.GetCommandLineArgs())
+                {
+                    if (arg == argToTest)
+                    {
+                        return true;
+                    }
                 }
             }
 
