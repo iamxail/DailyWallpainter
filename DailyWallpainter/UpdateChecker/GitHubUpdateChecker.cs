@@ -7,17 +7,7 @@ using System.Reflection;
 
 namespace DailyWallpainter.UpdateChecker
 {
-    public class CheckCompletedEventArgs : EventArgs
-    {
-        public CheckCompletedEventArgs(object userState)
-        {
-            UserState = userState;
-        }
-
-        public object UserState { get; protected set; }
-    }
-
-    public class GitHubUpdateChecker
+    public class GitHubUpdateChecker : IUpdateChecker
     {
         public GitHubUpdateChecker(string username, string repoName, string filename)
         {
@@ -37,7 +27,6 @@ namespace DailyWallpainter.UpdateChecker
         public bool IsNewVersionAvailable { get; protected set; }
         public bool IsChecked { get; protected set; }
 
-        public delegate void CheckCompletedEventHandler(object sender, CheckCompletedEventArgs e);
         public event CheckCompletedEventHandler CheckCompleted;
 
         private string GetMajorDotMinorVersion()
@@ -62,6 +51,7 @@ namespace DailyWallpainter.UpdateChecker
         private void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             var client = (e.UserState as object[])[0] as WebClient;
+            Exception ex = null;
 
             try
             {
@@ -94,8 +84,9 @@ namespace DailyWallpainter.UpdateChecker
                     }
                 }
             }
-            catch
+            catch (Exception thrown)
             {
+                ex = thrown;
             }
             finally
             {
@@ -111,15 +102,15 @@ namespace DailyWallpainter.UpdateChecker
                 }
 
                 IsChecked = true;
-                OnCheckCompleted((e.UserState as object[])[1]);
+                OnCheckCompleted((e.UserState as object[])[1], ex);
             }
         }
 
-        private void OnCheckCompleted(object userState)
+        private void OnCheckCompleted(object userState, Exception ex)
         {
             if (CheckCompleted != null)
             {
-                CheckCompleted(this, new CheckCompletedEventArgs(userState));
+                CheckCompleted(this, new CheckCompletedEventArgs(userState, ex));
             }
         }
     }

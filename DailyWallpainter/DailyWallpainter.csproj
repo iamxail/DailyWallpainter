@@ -78,6 +78,7 @@
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="UI\TrayIcon.cs" />
+    <Compile Include="UpdateChecker\IUpdateChecker.cs" />
     <EmbeddedResource Include="UI\frmAddtnlOptions.resx">
       <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
     </EmbeddedResource>
