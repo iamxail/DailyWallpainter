@@ -1,11 +1,15 @@
 ﻿using System;
-namespace DailyWallpainter.UpdateChecker
+namespace DailyWallpainter.Updater
 {
-    public interface IUpdateChecker
+    public interface IUpdater
     {
         void CheckAsync();
         void CheckAsync(object userState);
+
+        void Update();
+
         event CheckCompletedEventHandler CheckCompleted;
+
         bool IsChecked { get; }
         bool IsNewVersionAvailable { get; }
         string LatestVersion { get; }

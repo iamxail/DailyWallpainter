@@ -5,11 +5,11 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-namespace DailyWallpainter.UpdateChecker
+namespace DailyWallpainter.Updater
 {
-    public class GitHubUpdateChecker : IUpdateChecker
+    public class GitHubUpdater : Updater
     {
-        public GitHubUpdateChecker(string username, string repoName, string filename)
+        public GitHubUpdater(string username, string repoName, string filename)
         {
             Username = username;
             RepositoryName = repoName;
@@ -26,8 +26,9 @@ namespace DailyWallpainter.UpdateChecker
         public string LatestVersion { get; protected set; }
         public bool IsNewVersionAvailable { get; protected set; }
         public bool IsChecked { get; protected set; }
-
         public event CheckCompletedEventHandler CheckCompleted;
+
+        protected string newExeUrl;
 
         private string GetMajorDotMinorVersion()
         {
@@ -79,6 +80,14 @@ namespace DailyWallpainter.UpdateChecker
                             LatestVersion = match.Groups[1].Value;
                             IsNewVersionAvailable = (LatestVersion != nowVer);
 
+                            var regexUrl = new Regex("\"html_url\" *?: *?\"(.*?)\"", RegexOptions.IgnoreCase);
+                            var matchUrl = regexUrl.Match(download);
+
+                            if (matchUrl.Success)
+                            {
+                                newExeUrl = matchUrl.Groups[1].Value;
+                            }
+
                             break;
                         }
                     }
@@ -112,6 +121,11 @@ namespace DailyWallpainter.UpdateChecker
             {
                 CheckCompleted(this, new CheckCompletedEventArgs(userState, ex));
             }
+        }
+
+        public void Update()
+        {
+            Update(newExeUrl);
         }
     }
 }

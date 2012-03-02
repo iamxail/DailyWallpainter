@@ -66,7 +66,7 @@
     <Compile Include="UI\frmAddtnlOptions.Designer.cs">
       <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="UpdateChecker\GitHubUpdateChecker.cs" />
+    <Compile Include="Updater\GitHubUpdater.cs" />
     <Compile Include="UI\frmEditSource.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,7 +84,8 @@
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="UI\TrayIcon.cs" />
-    <Compile Include="UpdateChecker\IUpdateChecker.cs" />
+    <Compile Include="Updater\IUpdater.cs" />
+    <Compile Include="Updater\Updater.cs" />
     <EmbeddedResource Include="UI\frmAddtnlOptions.resx">
       <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
     </EmbeddedResource>

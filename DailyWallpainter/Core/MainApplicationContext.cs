@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Threading;
 using DailyWallpainter.UI;
 using DailyWallpainter.Helpers;
-using DailyWallpainter.UpdateChecker;
+using DailyWallpainter.Updater;
 using System.Drawing;
 using System.IO;
 
@@ -41,7 +41,7 @@ namespace DailyWallpainter
                 ShowSettings();
             }
 
-            IUpdateChecker updateChecker = new GitHubUpdateChecker("iamxail", Program.SafeName, Program.ExeName);
+            IUpdater updateChecker = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
             updateChecker.CheckCompleted += new CheckCompletedEventHandler(updateChecker_CheckCompleted);
             updateChecker.CheckAsync(updateChecker);
 
@@ -103,7 +103,7 @@ namespace DailyWallpainter
         {
             if (e.Error == null)
             {
-                var updateChecker = e.UserState as GitHubUpdateChecker;
+                var updateChecker = e.UserState as GitHubUpdater;
 
                 LatestVersion = updateChecker.LatestVersion;
                 isNewVersionAvailable = updateChecker.IsNewVersionAvailable;
