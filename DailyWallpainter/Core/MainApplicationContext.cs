@@ -225,9 +225,6 @@ namespace DailyWallpainter
                 return;
             }
 
-            Bitmap desktop = null;
-            Bitmap appBg = null;
-
             try
             {
                 tmrDownload.Stop();
@@ -237,60 +234,32 @@ namespace DailyWallpainter
                 }
 
                 var sources = s.Sources.GetEnabledSources();
-                var allScreen = new MultiScreenInfo();
 
                 foreach (var source in sources)
                 {
-                    using (var bmpDownload = source.GetBitmap())
+                    try
                     {
-                        s.Sources.Save();
-
-                        if (bmpDownload != null)
+                        using (var bmpDownload = source.GetBitmap())
                         {
-                            bmpDownload.Save();
-
-                            if (bmpDownload.CheckResolutionLowerLimit())
+                            if (bmpDownload != null)
                             {
-                                desktop = new Bitmap(allScreen.VirtualDesktop.Width, allScreen.VirtualDesktop.Height);
+                                bmpDownload.Save();
 
-                                using (var gDesktop = Graphics.FromImage(desktop))
+                                using (var wallpaper = new Wallpaper(bmpDownload))
                                 {
-                                    gDesktop.SetHighQuality();
-
-                                    if (bmpDownload.CheckStretchForMultiScreen())
-                                    {
-                                        gDesktop.DrawImageFitOutside(bmpDownload.Bitmap, allScreen.AdjustedVirtualDesktop);
-                                    }
-                                    else
-                                    {
-                                        foreach (var scr in allScreen.AllScreens)
-                                        {
-                                            gDesktop.DrawImageFitOutside(bmpDownload.Bitmap, scr.AdjustedBounds);
-                                        }
-                                    }
+                                    wallpaper.SetToDesktop();
                                 }
 
-                                appBg = bmpDownload.Bitmap.Crop(0, 0, 100, 165);
+                                var appBg = bmpDownload.Bitmap.Crop(0, 0, 100, 165);
+                                appBg.SafeSave(Program.AppData, @"appbg.bmp");
 
                                 break;
                             }
                         }
                     }
-                }
-
-                if (desktop != null && appBg != null)
-                {
-                    string path = Path.Combine(s.SaveFolder, "Current Wallpaper.bmp");
-                    desktop.Save(path, System.Drawing.Imaging.ImageFormat.Bmp);
-                    Wallpaper.Change(path);
-
-                    string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Program.Name);
-                    if (Directory.Exists(appBgPath) == false)
+                    catch
                     {
-                        Directory.CreateDirectory(appBgPath);
                     }
-                    appBgPath = Path.Combine(appBgPath, @"appbg.bmp");
-                    appBg.Save(appBgPath, System.Drawing.Imaging.ImageFormat.Bmp);
                 }
             }
             catch
@@ -298,15 +267,7 @@ namespace DailyWallpainter
             }
             finally
             {
-                if (desktop != null)
-                {
-                    desktop.Dispose();
-                }
-
-                if (appBg != null)
-                {
-                    appBg.Dispose();
-                }
+                s.Sources.Save();
 
                 if (lastWorking)
                 {

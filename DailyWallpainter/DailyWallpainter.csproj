@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Wallpaper.cs" />
     <Compile Include="Helpers\BitmapHelper.cs" />
     <Compile Include="Helpers\ExtensionMethodHack.cs" />
     <Compile Include="Helpers\ScreenInfo.cs" />
@@ -77,7 +78,6 @@
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="UI\TrayIcon.cs" />
-    <Compile Include="Helpers\Wallpaper.cs" />
     <EmbeddedResource Include="UI\frmAddtnlOptions.resx">
       <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
     </EmbeddedResource>

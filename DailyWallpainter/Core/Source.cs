@@ -110,7 +110,14 @@ namespace DailyWallpainter
                 result = null;
             }
 
-            return new SourceBitmap(this, result);
+            if (result != null)
+            {
+                return new SourceBitmap(this, result);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

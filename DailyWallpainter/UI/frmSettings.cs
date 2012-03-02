@@ -42,14 +42,15 @@ namespace DailyWallpainter.UI
 
             RefreshSources();
             
-            string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Program.Name + @"\appbg.bmp");
+            string appBgPath = Path.Combine(Program.AppData, @"appbg.bmp");
             if (File.Exists(appBgPath))
             {
                 try
                 {
-                    picTitle.BackgroundImage = new Bitmap(appBgPath);
+                    var ms = new MemoryStream(File.ReadAllBytes(appBgPath));
+                    picTitle.BackgroundImage = new Bitmap(ms);
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }

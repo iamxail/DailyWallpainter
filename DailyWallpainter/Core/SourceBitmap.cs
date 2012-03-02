@@ -72,25 +72,31 @@ namespace DailyWallpainter
         private string GetBitmapExtension(byte[] bitmapData)
         {
             string ext = ".unknown";
-            if (bitmapData[0] == 0xFF && bitmapData[1] == 0xD8)
+            try
             {
-                ext = ".jpg";
-            }
-            else if (bitmapData[0] == 137 && bitmapData[1] == 80 && bitmapData[2] == 78 && bitmapData[3] == 71)
-            {
-                ext = ".png";
-            }
-            else
-            {
-                string header = Encoding.ASCII.GetString(bitmapData, 0, 3);
-                if (header == "GIF")
+                if (bitmapData[0] == 0xFF && bitmapData[1] == 0xD8)
                 {
-                    ext = ".gif";
+                    ext = ".jpg";
                 }
-                else if (header.Substring(0, 2) == "BM")
+                else if (bitmapData[0] == 137 && bitmapData[1] == 80 && bitmapData[2] == 78 && bitmapData[3] == 71)
                 {
-                    ext = ".bmp";
+                    ext = ".png";
                 }
+                else
+                {
+                    string header = Encoding.ASCII.GetString(bitmapData, 0, 3);
+                    if (header == "GIF")
+                    {
+                        ext = ".gif";
+                    }
+                    else if (header.Substring(0, 2) == "BM")
+                    {
+                        ext = ".bmp";
+                    }
+                }
+            }
+            catch
+            {
             }
 
             return ext;

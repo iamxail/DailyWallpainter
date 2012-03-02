@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using DailyWallpainter.Helpers;
+using System.IO;
 
 namespace DailyWallpainter
 {
@@ -31,5 +32,6 @@ namespace DailyWallpainter
         public const string Name = "Daily Wallpainter";
         public const string SafeName = "DailyWallpainter";
         public const string ExeName = SafeName + ".exe";
+        public readonly static string AppData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Name);
     }
 }
