@@ -33,5 +33,18 @@ namespace DailyWallpainter
         public const string SafeName = "DailyWallpainter";
         public const string ExeName = SafeName + ".exe";
         public readonly static string AppData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Name);
+
+        public static bool ArgumentExists(string argToTest)
+        {
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                if (arg.ToLower() == argToTest)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
