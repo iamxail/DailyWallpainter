@@ -13,7 +13,8 @@ namespace DailyWallpainter
         [STAThread]
         static void Main()
         {
-            if (SingleInstanceProgram.IsSingleInstaced() == false)
+            if (ArgumentExists("/forcestart") == false
+                && SingleInstanceProgram.IsSingleInstaced() == false)
             {
                 return;
             }
