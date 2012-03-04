@@ -14,11 +14,19 @@ namespace DailyWallpainter
         [STAThread]
         static void Main()
         {
-            //todo update when running is old version
-            if (ArgumentExists("/forcestart") == false
-                && SingleInstanceProgram.IsSingleInstaced() == false)
+            if (ArgumentExists("/forcestart") == false)
             {
-                return;
+                if (SingleInstanceProgram.IsSingleInstaced() == false)
+                {
+                    while (SingleInstanceProgram.IsSingleInstaced() == false)
+                    {
+                        if (MessageBox.Show("Daily Wallpainter가 이미 실행 중입니다.\r\n\r\n계속 진행하려면 실행 중인 Daily Wallpainter를 종료한 후 재시도하십시오.", Program.Name, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+                            == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                    }
+                }
             }
 
             Application.EnableVisualStyles();
