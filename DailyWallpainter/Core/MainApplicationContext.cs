@@ -285,7 +285,7 @@ namespace DailyWallpainter
                                 }
 
                                 var appBg = bmpDownload.Bitmap.Crop(0, 0, 100, 165);
-                                appBg.SafeSave(Program.AppData, @"appbg.bmp");
+                                appBg.SafeSave(Program.AppData, @"appbg.bmp", true);
 
                                 break;
                             }

@@ -90,13 +90,13 @@ namespace DailyWallpainter
 
         public void SetToDesktop()
         {
-            SetToDesktop(Path.Combine(s.SaveFolder, "Current Wallpaper.bmp"));
+            SetToDesktop(s.SaveFolder, "Current Wallpaper.bmp");
         }
 
-        public void SetToDesktop(string path)
+        public void SetToDesktop(string path, string filename)
         {
-            desktop.Save(path, System.Drawing.Imaging.ImageFormat.Bmp);
-            Wallpaper.Change(path);
+            string fullPath = desktop.SafeSave(path, filename, true);
+            Wallpaper.Change(fullPath);
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]

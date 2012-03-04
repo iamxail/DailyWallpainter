@@ -8,20 +8,24 @@ namespace DailyWallpainter.Helpers
 {
     public static class BitmapHelper
     {
-        public static void SafeSave(this Bitmap bitmap, string path, string filename)
+        public static string SafeSave(this Bitmap bitmap, string path, string filename, bool overwrite = false)
         {
-            SafeSave(bitmap, path, filename, System.Drawing.Imaging.ImageFormat.Bmp);
+            return SafeSave(bitmap, path, filename, overwrite, System.Drawing.Imaging.ImageFormat.Bmp);
         }
 
-        public static void SafeSave(this Bitmap bitmap, string path, string filename, System.Drawing.Imaging.ImageFormat format)
+        public static string SafeSave(this Bitmap bitmap, string path, string filename, bool overwrite, System.Drawing.Imaging.ImageFormat format)
         {
-            if (Directory.Exists(path) == false)
-            {
-                Directory.CreateDirectory(path);
-            }
-            var fullPath = Path.Combine(path, filename);
+            string fullPath = SafeFilename.Convert(path, filename, overwrite);
 
-            bitmap.Save(fullPath, format);
+            try
+            {
+                bitmap.Save(fullPath, format);
+            }
+            catch
+            {
+            }
+
+            return fullPath;
         }
 
         public static Bitmap Crop(this Bitmap original, int x, int y, int width, int height)
