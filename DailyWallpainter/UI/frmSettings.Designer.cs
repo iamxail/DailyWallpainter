@@ -263,7 +263,7 @@
             this.lnkDownloadUpdate.Size = new System.Drawing.Size(199, 23);
             this.lnkDownloadUpdate.TabIndex = 13;
             this.lnkDownloadUpdate.TabStop = true;
-            this.lnkDownloadUpdate.Text = "새로운 버전을 다운받으세요!";
+            this.lnkDownloadUpdate.Text = "새로운 버전으로 업데이트하세요!";
             this.lnkDownloadUpdate.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             this.lnkDownloadUpdate.Visible = false;
             this.lnkDownloadUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkDownloadUpdate_LinkClicked);
@@ -297,7 +297,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Shown += new System.EventHandler(this.frmSettings_Shown);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSettings_FormClosing);
             this.mnuSources.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picTitle)).EndInit();

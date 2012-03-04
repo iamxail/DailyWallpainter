@@ -55,6 +55,7 @@
     <Compile Include="Core\MainApplicationContext.cs" />
     <Compile Include="Core\SourceBitmap.cs" />
     <Compile Include="Core\SourceCollection.cs" />
+    <Compile Include="Helpers\VersionHelper.cs" />
     <Compile Include="UI\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,7 +68,14 @@
     <Compile Include="UI\frmAddtnlOptions.Designer.cs">
       <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="UpdateChecker\GitHubUpdateChecker.cs" />
+    <Compile Include="UI\frmWorking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\frmWorking.Designer.cs">
+      <DependentUpon>frmWorking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WorkingUI.cs" />
+    <Compile Include="Updater\GitHubUpdater.cs" />
     <Compile Include="UI\frmEditSource.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -85,7 +93,9 @@
     <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="UI\TrayIcon.cs" />
-    <Compile Include="UpdateChecker\IUpdateChecker.cs" />
+    <Compile Include="Updater\Installer.cs" />
+    <Compile Include="Updater\IUpdater.cs" />
+    <Compile Include="Updater\Updater.cs" />
     <EmbeddedResource Include="UI\frmAddtnlOptions.resx">
       <DependentUpon>frmAddtnlOptions.cs</DependentUpon>
     </EmbeddedResource>
@@ -105,6 +115,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\frmWorking.resx">
+      <DependentUpon>frmWorking.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -124,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\paper.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wait16.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
