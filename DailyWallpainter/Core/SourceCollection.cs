@@ -22,6 +22,8 @@ namespace DailyWallpainter
         internal SourceCollection(string from)
         {
             list = new List<Source>(Source.GetSourcesFromString(from));
+
+            Initialize();
         }
 
         public void Initialize(bool force = false)
