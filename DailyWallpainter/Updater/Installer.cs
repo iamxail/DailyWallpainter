@@ -22,22 +22,58 @@ namespace DailyWallpainter.Updater
             return !Application.ExecutablePath.ToLower().StartsWith(Program.AppData.ToLower());
         }
 
-        public void Install()
+        public void InstallAsync()
         {
-            frmWorking work = null;
+            var work = new WorkingUI(cntx);
 
+            IUpdater updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
+            updater.CheckCompleted += new CheckCompletedEventHandler(updater_CheckCompleted);
+            updater.CheckAsync(new object[] { updater, work } );
+        }
+
+        private void updater_CheckCompleted(object sender, CheckCompletedEventArgs e)
+        {
+            var states = e.UserState as object[];
+            var updater = states[0] as IUpdater;
+            var work = states[1] as WorkingUI;
+
+            if (updater.IsNewVersionAvailable)
+            {
+                updater.UpdateCompleted += new UpdateCompletedEventHandler(updater_UpdateCompleted);
+                updater.UpdateAsync(false, work);
+            }
+            else
+            {
+                InstallInternal(work);
+            }
+        }
+
+        private void updater_UpdateCompleted(object sender, UpdateCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                InstallInternal(e.UserState as WorkingUI);
+            }
+        }
+
+        private void InstallInternal(WorkingUI work)
+        {
             try
             {
-                cntx.BeginInvoke(new MethodInvoker(() =>
-                {
-                    work = new frmWorking();
-                    work.Show();
-                    work.Activate();
-                }));
-
                 string installedExePath = Path.Combine(Program.AppData, Program.SafeName + "_" + Program.Version + ".exe");
 
-                File.Copy(Application.ExecutablePath, installedExePath, true);
+                try
+                {
+                    if (Directory.Exists(Program.AppData) == false)
+                    {
+                        Directory.CreateDirectory(Program.AppData);
+                    }
+
+                    File.Copy(Application.ExecutablePath, installedExePath, true);
+                }
+                catch
+                {
+                }
 
                 string argsStr = string.Empty;
 
@@ -53,19 +89,25 @@ namespace DailyWallpainter.Updater
                 }
 
                 Process.Start(installedExePath, argsStr + " /forcestart");
+            }
+            catch (Exception ex)
+            {
+                work.MessageBoxShow("Daily Wallpainter를 설치하는 중에 문제가 발견되었습니다.\r\n\r\n" + ex.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                try
+                {
+                    work.Dispose();
+                }
+                catch
+                {
+                }
 
                 cntx.BeginInvoke(new MethodInvoker(() =>
                 {
                     Application.Exit();
                 }));
-            }
-            catch
-            {
-                if (work != null)
-                {
-                    work.Dispose();
-                    work = null;
-                }
             }
         }
     }

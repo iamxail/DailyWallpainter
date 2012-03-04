@@ -79,9 +79,14 @@ namespace DailyWallpainter.UI
                     if (MessageBox.Show(this, Program.Name + "가 새 " + Program.Context.LatestVersion + " 버전으로 업데이트되었습니다.\r\n\r\n지금 업데이트 하시겠습니까?", Program.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == System.Windows.Forms.DialogResult.Yes)
                     {
-                        this.Hide();
-
-                        updater.Update(false);
+                        try
+                        {
+                            WorkingUI.SetParent(this);
+                            updater.UpdateAsync(false);
+                        }
+                        catch
+                        {
+                        }
                     }
                     else
                     {
@@ -310,7 +315,15 @@ namespace DailyWallpainter.UI
             }
 
             lnkDownloadUpdate.Visible = false;
-            updaterDelayed.Update(true);
+
+            try
+            {
+                WorkingUI.SetParent(this);
+                updaterDelayed.UpdateAsync(true);
+            }
+            catch
+            {
+            }
         }
 
         private void btnAddtnlOptions_Click(object sender, EventArgs e)
@@ -318,6 +331,14 @@ namespace DailyWallpainter.UI
             using (var addopts = new frmAddtnlOptions())
             {
                 addopts.ShowDialog(this);
+            }
+        }
+
+        private void frmSettings_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (WorkingUI.Parent == this)
+            {
+                WorkingUI.DeleteParent();
             }
         }
     }

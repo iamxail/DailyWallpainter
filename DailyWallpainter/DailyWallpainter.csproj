@@ -74,6 +74,7 @@
     <Compile Include="UI\frmWorking.Designer.cs">
       <DependentUpon>frmWorking.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\WorkingUI.cs" />
     <Compile Include="Updater\GitHubUpdater.cs" />
     <Compile Include="UI\frmEditSource.cs">
       <SubType>Form</SubType>

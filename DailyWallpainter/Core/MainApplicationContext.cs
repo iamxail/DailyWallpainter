@@ -23,6 +23,7 @@ namespace DailyWallpainter
         private readonly SynchronizationContext syncCntx;
         private TrayIcon tray;
         private IUpdater updater;
+        private Installer installer;
 
         public MainApplicationContext()
         {
@@ -30,10 +31,10 @@ namespace DailyWallpainter
 
             syncCntx = new WindowsFormsSynchronizationContext();
 
-            var installer = new Installer(this);
+            installer = new Installer(this);
             if (installer.CheckNeedInstall())
             {
-                installer.Install();
+                installer.InstallAsync();
 
                 return;
             }
@@ -56,7 +57,8 @@ namespace DailyWallpainter
             }
 
             updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
-            updater.CheckCompleted += new CheckCompletedEventHandler(updateChecker_CheckCompleted);
+            updater.CheckCompleted += new CheckCompletedEventHandler(updater_CheckCompleted);
+            updater.UpdateCompleted += new UpdateCompletedEventHandler(updater_UpdateCompleted);
             updater.CheckAsync();
 
             tmrDownload = new System.Timers.Timer();
@@ -105,8 +107,10 @@ namespace DailyWallpainter
                 || StartedByWindows == false;
         }
 
-        private void updateChecker_CheckCompleted(object sender, CheckCompletedEventArgs e)
+        private void updater_CheckCompleted(object sender, CheckCompletedEventArgs e)
         {
+            bool updating = false;
+
             try
             {
                 if (IsNeededToNotifyNewVersion)
@@ -119,7 +123,14 @@ namespace DailyWallpainter
                     {
                         if (s.IsSilentUpdate)
                         {
-                            updater.Update(true);
+                            try
+                            {
+                                updater.UpdateAsync(true);
+                                updating = true;
+                            }
+                            catch
+                            {
+                            }
                         }
                         else
                         {
@@ -133,9 +144,21 @@ namespace DailyWallpainter
             }
             finally
             {
-                if (IsfrmSettingAvailable == false)
+                if (IsfrmSettingAvailable == false
+                    && updating == false)
                 {
                     passTimer.Reset();
+                }
+            }
+        }
+
+        private void updater_UpdateCompleted(object sender, UpdateCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                using (var work = new WorkingUI())
+                {
+                    work.MessageBoxShow("업데이트 설치 중에 문제가 발견되었습니다.\r\n\r\n" + e.Error.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -217,7 +240,14 @@ namespace DailyWallpainter
         //from http://nosuchblogger.com/post/60/applicationcontext-and-the-ui-thread
         public void BeginInvoke(Delegate callback, object[] args)
         {
-            syncCntx.Post(state => callback.DynamicInvoke(state as object[]), args);
+            if (InvokeRequired)
+            {
+                syncCntx.Post(state => callback.DynamicInvoke(state as object[]), args);
+            }
+            else
+            {
+                callback.DynamicInvoke(args);
+            }
         }
 
         public void BeginInvoke(Delegate callback)

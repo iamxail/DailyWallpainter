@@ -27,38 +27,21 @@ namespace DailyWallpainter.Updater
         public override string LatestVersion { get; protected set; }
         public override bool IsNewVersionAvailable { get; protected set; }
         public override bool IsChecked { get; protected set; }
-        public override event CheckCompletedEventHandler CheckCompleted;
+        public override event CheckCompletedEventHandler CheckCompleted = delegate { };
 
         protected string newExeUrl;
 
-        public override void CheckAsync()
+        private string GetRepoDownloadsUrl()
         {
-            CheckAsync(null);
+            return "https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads";
         }
 
-        public override void CheckAsync(object userState)
+        private void CheckInternal(string downloaded)
         {
-            var client = new WebClient();
-            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
-            client.DownloadStringAsync(new Uri("https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads"), new object[] { client, userState });
-        }
-
-        private void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            var client = (e.UserState as object[])[0] as WebClient;
-            Exception ex = null;
-
             try
             {
-                if (e.Error != null)
-                {
-                    throw e.Error;
-                }
-
-                var downloads = e.Result;
-
                 var regexSplitter = new Regex("}[ .\r\n]*?,[ .\r\n]*?{");
-                var downloadsSplitted = regexSplitter.Split(downloads);
+                var downloadsSplitted = regexSplitter.Split(downloaded);
 
                 var regexFilename = new Regex("\"name\" *?: *?\"" + Filename + "\"[ .\r\n]*[,}]", RegexOptions.IgnoreCase);
                 foreach (var download in downloadsSplitted)
@@ -86,12 +69,48 @@ namespace DailyWallpainter.Updater
                     }
                 }
             }
+            catch
+            {
+                IsNewVersionAvailable = false;
+                LatestVersion = Program.Version;
+
+                throw;
+            }
+            finally
+            {
+                IsChecked = true;
+            }
+        }
+
+        public override void CheckAsync()
+        {
+            CheckAsync(null);
+        }
+
+        public override void CheckAsync(object userState)
+        {
+            var client = new WebClient();
+            client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
+            client.DownloadStringAsync(new Uri(GetRepoDownloadsUrl()), new object[] { client, userState });
+        }
+
+        private void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            var client = (e.UserState as object[])[0] as WebClient;
+            Exception ex = null;
+
+            try
+            {
+                if (e.Error != null)
+                {
+                    throw e.Error;
+                }
+
+                CheckInternal(e.Result);
+            }
             catch (Exception thrown)
             {
                 ex = thrown;
-
-                IsNewVersionAvailable = false;
-                LatestVersion = Program.Version;
             }
             finally
             {
@@ -106,22 +125,23 @@ namespace DailyWallpainter.Updater
                 {
                 }
 
-                IsChecked = true;
                 OnCheckCompleted((e.UserState as object[])[1], ex);
             }
         }
 
-        private void OnCheckCompleted(object userState, Exception ex)
+        protected virtual void OnCheckCompleted(object userState, Exception ex)
         {
-            if (CheckCompleted != null)
-            {
-                CheckCompleted(this, new CheckCompletedEventArgs(userState, ex));
-            }
+            CheckCompleted(this, new CheckCompletedEventArgs(userState, ex));
         }
 
-        public override void Update(bool silent)
+        public override void UpdateAsync(bool silent)
         {
-            Update(newExeUrl, Program.SafeName + "_" + LatestVersion + ".exe", silent);
+            UpdateAsync(silent, null);
+        }
+
+        public override void UpdateAsync(bool silent, object userState)
+        {
+            UpdateAsync(newExeUrl, Program.SafeName + "_" + LatestVersion + ".exe", silent, userState);
         }
     }
 }
