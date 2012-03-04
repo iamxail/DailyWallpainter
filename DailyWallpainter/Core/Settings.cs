@@ -78,6 +78,10 @@ namespace DailyWallpainter
 
                 case "1.3.0.0":
                     //do nothing
+                    goto case "1.4.0.0";
+
+                case "1.4.0.0":
+                    //do nothing
                     break;
 
                 default: //maybe settings of higher version is detected
