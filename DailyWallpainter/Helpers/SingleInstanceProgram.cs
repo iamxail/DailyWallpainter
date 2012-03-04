@@ -1,4 +1,6 @@
-﻿using System;
+﻿//http://stackoverflow.com/questions/229565/what-is-a-good-pattern-for-using-a-global-mutex-in-c/229567
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -8,16 +10,33 @@ namespace DailyWallpainter.Helpers
 {
     public static class SingleInstanceProgram
     {
-        private static Mutex mutex = new Mutex(true, Application.ProductName + "MutexForSingleInstance");
+        private static Mutex mutex = new Mutex(false, Application.ProductName + "MutexForSingleInstance");
 
         public static bool IsSingleInstaced()
         {
-            return mutex.WaitOne(TimeSpan.Zero, true);
+            bool hasHandle;
+
+            try
+            {
+                hasHandle = mutex.WaitOne(TimeSpan.Zero, false);
+            }
+            catch (AbandonedMutexException)
+            {
+                hasHandle = true;
+            }
+
+            return hasHandle;
         }
 
         public static void Release()
         {
-            mutex.ReleaseMutex();
+            try
+            {
+                mutex.ReleaseMutex();
+            }
+            catch
+            {
+            }
         }
     }
 }
