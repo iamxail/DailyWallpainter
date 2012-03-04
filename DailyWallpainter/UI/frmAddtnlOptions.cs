@@ -8,12 +8,12 @@ using System.Windows.Forms;
 
 namespace DailyWallpainter.UI
 {
-    public partial class frmAddtnlOptions : Form
+    public partial class frmAddtnlOptions : BaseForm
     {
         private Settings s = Settings.Instance;
         private bool initialized;
 
-        public frmAddtnlOptions()
+        public frmAddtnlOptions() : base()
         {
             initialized = false;
 
@@ -33,6 +33,8 @@ namespace DailyWallpainter.UI
                 rdoMultiScreenEach.Checked = true;
             }
             chkMultiScreenStretchCheckRatio.Checked = s.IsCheckRatioWhenStretch;
+
+            chkSilentUpdate.Checked = s.IsSilentUpdate;
 
             initialized = true;
         }
@@ -108,6 +110,14 @@ namespace DailyWallpainter.UI
             if (initialized)
             {
                 s.IsCheckRatioWhenStretch = chkMultiScreenStretchCheckRatio.Checked;
+            }
+        }
+
+        private void chkSilentUpdate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initialized)
+            {
+                s.IsSilentUpdate = chkSilentUpdate.Checked;
             }
         }
     }

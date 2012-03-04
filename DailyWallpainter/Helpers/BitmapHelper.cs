@@ -8,6 +8,26 @@ namespace DailyWallpainter.Helpers
 {
     public static class BitmapHelper
     {
+        public static string SafeSave(this Bitmap bitmap, string path, string filename, bool overwrite = false)
+        {
+            return SafeSave(bitmap, path, filename, overwrite, System.Drawing.Imaging.ImageFormat.Bmp);
+        }
+
+        public static string SafeSave(this Bitmap bitmap, string path, string filename, bool overwrite, System.Drawing.Imaging.ImageFormat format)
+        {
+            string fullPath = SafeFilename.Convert(path, filename, overwrite);
+
+            try
+            {
+                bitmap.Save(fullPath, format);
+            }
+            catch
+            {
+            }
+
+            return fullPath;
+        }
+
         public static Bitmap Crop(this Bitmap original, int x, int y, int width, int height)
         {
             try
@@ -87,61 +107,6 @@ namespace DailyWallpainter.Helpers
             {
                 return null;
             }
-        }
-
-        private static string GetBitmapExtension(byte[] bitmapData)
-        {
-            string ext = ".unknown";
-            if (bitmapData[0] == 0xFF && bitmapData[1] == 0xD8)
-            {
-                ext = ".jpg";
-            }
-            else if (bitmapData[0] == 137 && bitmapData[1] == 80 && bitmapData[2] == 78 && bitmapData[3] == 71)
-            {
-                ext = ".png";
-            }
-            else
-            {
-                string header = Encoding.ASCII.GetString(bitmapData, 0, 3);
-                if (header == "GIF")
-                {
-                    ext = ".gif";
-                }
-                else if (header.Substring(0, 2) == "BM")
-                {
-                    ext = ".bmp";
-                }
-            }
-
-            return ext;
-        }
-
-        public static void SaveBitmap(this byte[] bitmapData, string directory, string filenamePrefix)
-        {
-            string safeBitmapFilename = filenamePrefix + " at " + string.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            foreach (var c in Path.GetInvalidFileNameChars())
-            {
-                safeBitmapFilename.Replace(c, '_');
-            }
-
-            string ext = GetBitmapExtension(bitmapData);
-
-            if (Directory.Exists(directory) == false)
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            string path = Path.Combine(directory, safeBitmapFilename);
-
-            string suffix = "";
-            int i = 1;
-            while (File.Exists(path + suffix + ext))
-            {
-                i++;
-                suffix = " (" + i.ToString() + ")";
-            }
-
-            File.WriteAllBytes(path + suffix + ext, bitmapData);
         }
     }
 }

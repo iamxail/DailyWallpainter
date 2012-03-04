@@ -5,9 +5,10 @@ using System.Windows.Forms;
 using System.Threading;
 using DailyWallpainter.UI;
 using DailyWallpainter.Helpers;
-using DailyWallpainter.UpdateChecker;
+using DailyWallpainter.Updater;
 using System.Drawing;
 using System.IO;
+using System.Diagnostics;
 
 namespace DailyWallpainter
 {
@@ -21,6 +22,8 @@ namespace DailyWallpainter
         private bool lastWorking;
         private readonly SynchronizationContext syncCntx;
         private TrayIcon tray;
+        private IUpdater updater;
+        private Installer installer;
 
         public MainApplicationContext()
         {
@@ -28,22 +31,35 @@ namespace DailyWallpainter
 
             syncCntx = new WindowsFormsSynchronizationContext();
 
+            installer = new Installer(this);
+            if (installer.CheckNeedInstall())
+            {
+                installer.InstallAsync();
+
+                return;
+            }
+            installer = null;
+
             stopTimer = new ManualResetEvent(false);
             passTimer = new ManualResetEvent(true);
 
-            isNewVersionAvailable = false;
-            LatestVersion = string.Empty;
-
             lastWorking = s.IsCheckOnlyWhenStartup;
+
+            if (Program.ArgumentExists("/setstartup")
+                || s.InitialStart)
+            {
+                s.RunOnStartup = true;
+            }
 
             if (IsNeededToShowSettings())
             {
                 ShowSettings();
             }
 
-            var updateChecker = new GitHubUpdateChecker("iamxail", Program.SafeName, Program.ExeName);
-            updateChecker.CheckCompleted += new GitHubUpdateChecker.CheckCompletedEventHandler(updateChecker_CheckCompleted);
-            updateChecker.CheckAsync(updateChecker);
+            updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
+            updater.CheckCompleted += new CheckCompletedEventHandler(updater_CheckCompleted);
+            updater.UpdateCompleted += new UpdateCompletedEventHandler(updater_UpdateCompleted);
+            updater.CheckAsync();
 
             tmrDownload = new System.Timers.Timer();
             tmrDownload.Interval = 5000;
@@ -85,53 +101,76 @@ namespace DailyWallpainter
 
         private bool IsNeededToShowSettings()
         {
-            bool StartByWindows = false;
-            foreach (var arg in Environment.GetCommandLineArgs())
-            {
-                if (StartByWindows == false
-                    && arg.ToLower() == "/winstart")
-                {
-                    StartByWindows = true;
-                }
-            }
+            bool StartedByWindows = Program.ArgumentExists("/winstart");
 
             return s.InitialStart
-                || StartByWindows == false;
+                || StartedByWindows == false;
         }
 
-        private void updateChecker_CheckCompleted(object sender, CheckCompletedEventArgs e)
+        private void updater_CheckCompleted(object sender, CheckCompletedEventArgs e)
         {
-            var updateChecker = e.UserState as GitHubUpdateChecker;
+            bool updating = false;
 
-            LatestVersion = updateChecker.LatestVersion;
-            isNewVersionAvailable = updateChecker.IsNewVersionAvailable;
-
-            if (IsNeededToNotifyNewVersion)
+            try
             {
-                if (IsfrmSettingAvailable)
+                if (IsNeededToNotifyNewVersion)
                 {
-                    set.NotifyNewVersion();
-                }
-                else
-                {
-                    ShowSettings();
+                    if (IsfrmSettingAvailable)
+                    {
+                        set.NotifyNewVersion(updater);
+                    }
+                    else
+                    {
+                        if (s.IsSilentUpdate)
+                        {
+                            try
+                            {
+                                updater.UpdateAsync(true);
+                                updating = true;
+                            }
+                            catch
+                            {
+                            }
+                        }
+                        else
+                        {
+                            ShowSettings();
+                        }
+                    }
                 }
             }
-            else if (IsfrmSettingAvailable == false)
+            catch
             {
-                passTimer.Reset();
+            }
+            finally
+            {
+                if (IsfrmSettingAvailable == false
+                    && updating == false)
+                {
+                    passTimer.Reset();
+                }
             }
         }
 
-        private bool isNewVersionAvailable;
-        public string LatestVersion { get; private set; }
+        private void updater_UpdateCompleted(object sender, UpdateCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                using (var work = new WorkingUI())
+                {
+                    work.MessageBoxShow("업데이트 설치 중에 문제가 발견되었습니다.\r\n\r\n" + e.Error.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        public string LatestVersion { get { return updater.LatestVersion; } }
 
         public bool IsNeededToNotifyNewVersion
         {
             get
             {
-                return isNewVersionAvailable
-                    && LatestVersion != s.LastestVersionInformed;
+                return updater.IsNewVersionAvailable
+                    && updater.LatestVersion != s.LastestVersionInformed;
             }
         }
 
@@ -171,6 +210,7 @@ namespace DailyWallpainter
                     this.BeginInvoke(new MethodInvoker(() =>
                     {
                         set = new frmSettings();
+                        set.Shown += new EventHandler(frmSettings_Shown);
                         set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
 
                         set.Show();
@@ -180,6 +220,7 @@ namespace DailyWallpainter
                 else
                 {
                     set = new frmSettings();
+                    set.Shown += new EventHandler(frmSettings_Shown);
                     set.FormClosed += new FormClosedEventHandler(frmSettings_FormClosed);
 
                     set.Show();
@@ -188,7 +229,7 @@ namespace DailyWallpainter
             }
         }
 
-        private bool InvokeRequired
+        public bool InvokeRequired
         {
             get
             {
@@ -197,14 +238,29 @@ namespace DailyWallpainter
         }
 
         //from http://nosuchblogger.com/post/60/applicationcontext-and-the-ui-thread
-        private void BeginInvoke(Delegate callback, object[] args)
+        public void BeginInvoke(Delegate callback, object[] args)
         {
-            syncCntx.Post(state => callback.DynamicInvoke(state as object[]), args);
+            if (InvokeRequired)
+            {
+                syncCntx.Post(state => callback.DynamicInvoke(state as object[]), args);
+            }
+            else
+            {
+                callback.DynamicInvoke(args);
+            }
         }
 
-        private void BeginInvoke(Delegate callback)
+        public void BeginInvoke(Delegate callback)
         {
             BeginInvoke(callback, null);
+        }
+
+        private void frmSettings_Shown(object sender, EventArgs e)
+        {
+            if (IsNeededToNotifyNewVersion)
+            {
+                set.NotifyNewVersion(updater);
+            }
         }
 
         private void frmSettings_FormClosed(object sender, FormClosedEventArgs e)
@@ -218,15 +274,20 @@ namespace DailyWallpainter
             passTimer.Reset();
         }
 
+        public TrayIcon TrayIcon
+        {
+            get
+            {
+                return tray;
+            }
+        }
+
         private void tmrDownload_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (passTimer.WaitOne(0))
             {
                 return;
             }
-
-            Bitmap desktop = null;
-            Bitmap appBg = null;
 
             try
             {
@@ -240,86 +301,37 @@ namespace DailyWallpainter
 
                 foreach (var source in sources)
                 {
-                    var data = source.GetBitmapBytes();
-                    if (data != null)
+                    try
                     {
-                        data.SaveBitmap(s.SaveFolder, source.Name);
-
-                        var allScreen = new MultiScreenInfo();
-
-                        desktop = new Bitmap(allScreen.VirtualDesktop.Width, allScreen.VirtualDesktop.Height);
-
-                        using (var ms = new MemoryStream(data))
-                        using (var bmpDownload = new Bitmap(ms))
-                        using (var gDesktop = Graphics.FromImage(desktop))
+                        using (var bmpDownload = source.GetBitmap())
                         {
-                            var RsltnLowerLimit = s.ResolutionLowerLimit;
-                            if (RsltnLowerLimit.Enabled == false
-                                || (bmpDownload.Width > RsltnLowerLimit.Width && bmpDownload.Height > RsltnLowerLimit.Height))
+                            if (bmpDownload != null)
                             {
-                                gDesktop.SetHighQuality();
+                                bmpDownload.Save();
 
-                                if (s.IsStretchForMultiScreen == false
-                                    || (s.IsCheckRatioWhenStretch && allScreen.IsPreferredToStretch(bmpDownload.Size) == false))
+                                using (var wallpaper = new Wallpaper(bmpDownload))
                                 {
-                                    foreach (var scr in allScreen.AllScreens)
-                                    {
-                                        gDesktop.DrawImageFitOutside(bmpDownload, scr.AdjustedBounds);
-                                    }
-                                }
-                                else
-                                {
-                                    gDesktop.DrawImageFitOutside(bmpDownload, allScreen.AdjustedVirtualDesktop);
+                                    wallpaper.SetToDesktop();
                                 }
 
-                                appBg = bmpDownload.Crop(0, 0, 100, 165);
+                                var appBg = bmpDownload.Bitmap.Crop(0, 0, 100, 165);
+                                appBg.SafeSave(Program.AppData, @"appbg.bmp", true);
+
+                                break;
                             }
                         }
-
-                        s.Sources.Save();
-
-                        if (desktop != null)
-                        {
-                            break;
-                        }
                     }
-                }
-
-                if (desktop != null)
-                {
-                    string path = Path.Combine(s.SaveFolder, "Current Wallpaper.bmp");
-
-                    desktop.Save(path, System.Drawing.Imaging.ImageFormat.Bmp);
-
-                    Wallpaper.Change(path);
-                }
-
-                if (appBg != null)
-                {
-                    string appBgPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Program.Name);
-                    if (Directory.Exists(appBgPath) == false)
+                    catch
                     {
-                        Directory.CreateDirectory(appBgPath);
                     }
-                    appBgPath = Path.Combine(appBgPath, @"appbg.bmp");
-
-                    appBg.Save(appBgPath, System.Drawing.Imaging.ImageFormat.Bmp);
                 }
             }
-            catch (Exception)
+            catch
             {
             }
             finally
             {
-                if (desktop != null)
-                {
-                    desktop.Dispose();
-                }
-
-                if (appBg != null)
-                {
-                    appBg.Dispose();
-                }
+                s.Sources.Save();
 
                 if (lastWorking)
                 {

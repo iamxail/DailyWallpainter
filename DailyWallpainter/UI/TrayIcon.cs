@@ -59,6 +59,18 @@ namespace DailyWallpainter.UI
             ntfTray.MouseClick += new MouseEventHandler(ntfTray_MouseClick);
         }
 
+        public bool Visible
+        {
+            get
+            {
+                return ntfTray.Visible;
+            }
+            set
+            {
+                ntfTray.Visible = value;
+            }
+        }
+
         private static void mitShowSettings_Click(object sender, EventArgs e)
         {
             Program.Context.ShowSettings();
