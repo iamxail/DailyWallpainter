@@ -49,6 +49,7 @@
     <Compile Include="Core\Wallpaper.cs" />
     <Compile Include="Helpers\BitmapHelper.cs" />
     <Compile Include="Helpers\ExtensionMethodHack.cs" />
+    <Compile Include="Helpers\SafeFilename.cs" />
     <Compile Include="Helpers\ScreenInfo.cs" />
     <Compile Include="Helpers\SingleInstanceProgram.cs" />
     <Compile Include="Core\MainApplicationContext.cs" />

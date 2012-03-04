@@ -109,32 +109,9 @@ namespace DailyWallpainter
 
         public void Save(string directory)
         {
-            string filenamePrefix = parent.Name;
+            string filename = parent.Name + " at " + string.Format("{0:yyyy-MM-dd}", DateTime.Now) + GetBitmapExtension(bitmapData);
 
-            string safeBitmapFilename = filenamePrefix + " at " + string.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            foreach (var c in Path.GetInvalidFileNameChars())
-            {
-                safeBitmapFilename.Replace(c, '_');
-            }
-
-            string ext = GetBitmapExtension(bitmapData);
-
-            if (Directory.Exists(directory) == false)
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            string path = Path.Combine(directory, safeBitmapFilename);
-
-            string suffix = "";
-            int i = 1;
-            while (File.Exists(path + suffix + ext))
-            {
-                i++;
-                suffix = " (" + i.ToString() + ")";
-            }
-
-            File.WriteAllBytes(path + suffix + ext, bitmapData);
+            File.WriteAllBytes(SafeFilename.Convert(directory, filename), bitmapData);
         }
 
         public bool CheckResolutionLowerLimit()
