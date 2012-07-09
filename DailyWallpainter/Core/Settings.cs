@@ -332,6 +332,18 @@ namespace DailyWallpainter
             }
         }
 
+        public bool IsNotStretch
+        {
+            get
+            {
+                return GetBoolean("IsNotStretch", true);
+            }
+            set
+            {
+                Set("IsNotStretch", value.ToString());
+            }
+        }
+
         /*public int DaysToSave
         {
             get

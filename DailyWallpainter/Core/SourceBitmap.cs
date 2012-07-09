@@ -141,6 +141,7 @@ namespace DailyWallpainter
             var allScreen = MultiScreenInfo.Instance;
 
             return s.IsStretchForMultiScreen
+                && allScreen.AllScreens.Length > 1
                 && (s.IsCheckRatioWhenStretch == false || allScreen.IsPreferredToStretch(bitmap.Size));
         }
 

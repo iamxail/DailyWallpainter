@@ -187,10 +187,7 @@ namespace DailyWallpainter
             if (bitmapsCount == 1
                 && bitmaps[0].CheckStretchForMultiScreen())
             {
-                gDesktop.DrawImageFitOutside(bitmaps[0].Bitmap, allScreen.AdjustedVirtualDesktop);
-
-                bitmaps[0].Save();
-                bitmaps[0].Apply();
+                DrawBitmapToDesktop(bitmaps[0]);
 
                 s.LastUpdatedScreen = 0;
             }
@@ -210,10 +207,7 @@ namespace DailyWallpainter
                             i = 0;
                         }
 
-                        SourceBitmap bitmap = bitmaps[i];
-                        gDesktop.DrawImageFitOutside(bitmap.Bitmap, allScreen.AllScreens[nextUpdateScreen].AdjustedBounds);
-                        bitmap.Save();
-                        bitmap.Apply();
+                        DrawBitmapToDesktop(bitmaps[i], nextUpdateScreen);
 
                         i++;
                         nextUpdateScreen++;
@@ -229,10 +223,7 @@ namespace DailyWallpainter
                             nextUpdateScreen = 0;
                         }
 
-                        SourceBitmap bitmap = bitmaps[i];
-                        gDesktop.DrawImageFitOutside(bitmap.Bitmap, allScreen.AllScreens[nextUpdateScreen].AdjustedBounds);
-                        bitmap.Save();
-                        bitmap.Apply();
+                        DrawBitmapToDesktop(bitmaps[i], nextUpdateScreen);
 
                         i++;
                         nextUpdateScreen++;
@@ -252,6 +243,92 @@ namespace DailyWallpainter
                 string fullPath = desktop.SafeSave(path, filename, true);
                 Wallpaper.Change(fullPath);
             }
+        }
+
+        private void DrawBitmapToDesktop(SourceBitmap bitmap)
+        {
+            gDesktop.DrawImageFitOutside(bitmaps[0].Bitmap, allScreen.AdjustedVirtualDesktop);
+
+            bitmap.Save();
+            bitmap.Apply();
+        }
+
+        private void DrawBitmapToDesktop(SourceBitmap bitmap, int screenNumber)
+        {
+            Rectangle dest = allScreen.AllScreens[screenNumber].AdjustedBounds;
+            int bitmapWidth = bitmap.Bitmap.Width;
+            int bitmapHeight = bitmap.Bitmap.Height;
+
+            if (s.IsNotStretch
+                && (bitmapWidth < dest.Width || bitmapHeight < dest.Height))
+            {
+                int srcX;
+                int srcWidth;
+                int srcY;
+                int srcHeight;
+                if (bitmapWidth <= dest.Width)
+                {
+                    srcX = 0;
+                    srcWidth = bitmapWidth;
+                }
+                else //bitmapWidth > bounds.Width
+                {
+                    srcX = (bitmapWidth - dest.Width) / 2;
+                    srcWidth = dest.Width;
+                }
+                if (bitmapHeight <= dest.Height)
+                {
+                    srcY = 0;
+                    srcHeight = bitmapHeight;
+                }
+                else //bitmapHeight > bounds.Height
+                {
+                    srcY = (bitmapHeight - dest.Height) / 2;
+                    srcHeight = dest.Height;
+                }
+                Rectangle src = new Rectangle(srcX, srcY, srcWidth, srcHeight);
+
+                const int pickingPointNum = 5;
+                int R = 0;
+                int G = 0;
+                int B = 0;
+                for (int x = 0; x < pickingPointNum; x++)
+                {
+                    for (int y = 0; y < pickingPointNum; y++)
+                    {
+                        var c = bitmap.Bitmap.GetPixel((srcWidth / pickingPointNum) * x + srcX, (srcHeight / pickingPointNum) * y + srcY);
+                        R += c.R;
+                        G += c.G;
+                        B += c.B;
+                    }
+                }
+                R /= pickingPointNum;
+                G /= pickingPointNum;
+                B /= pickingPointNum;
+                Color bgColor;
+                try
+                {
+                    bgColor = Color.FromArgb(R, G, B);
+                }
+                catch
+                {
+                    bgColor = Color.Black;
+                }
+
+                using (var brush = new SolidBrush(bgColor))
+                {
+                    gDesktop.FillRectangle(brush, src);
+                }
+
+                gDesktop.DrawImage(bitmap.Bitmap, dest, src, GraphicsUnit.Pixel);
+            }
+            else
+            {
+                gDesktop.DrawImageFitOutside(bitmap.Bitmap, dest);
+            }
+
+            bitmap.Save();
+            bitmap.Apply();
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]

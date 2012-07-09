@@ -34,6 +34,7 @@ namespace DailyWallpainter.UI
             }
             chkMultiScreenStretchCheckRatio.Checked = s.IsCheckRatioWhenStretch;
             chkEachScreenEachSource.Checked = s.IsEachScreenEachSource;
+            chkNotStretch.Checked = s.IsNotStretch;
 
             chkSilentUpdate.Checked = s.IsSilentUpdate;
 
@@ -100,6 +101,7 @@ namespace DailyWallpainter.UI
         {
             chkMultiScreenStretchCheckRatio.Enabled = rdoMultiScreenStrectch.Checked;
             chkEachScreenEachSource.Enabled = rdoMultiScreenEach.Checked || chkMultiScreenStretchCheckRatio.Checked;
+            chkNotStretch.Enabled = chkEachScreenEachSource.Enabled;
 
             if (initialized)
             {
@@ -110,6 +112,7 @@ namespace DailyWallpainter.UI
         private void chkMultiScreenStretchCheckRatio_CheckedChanged(object sender, EventArgs e)
         {
             chkEachScreenEachSource.Enabled = rdoMultiScreenEach.Checked || chkMultiScreenStretchCheckRatio.Checked;
+            chkNotStretch.Enabled = chkEachScreenEachSource.Enabled;
 
             if (initialized)
             {
@@ -130,6 +133,14 @@ namespace DailyWallpainter.UI
             if (initialized)
             {
                 s.IsEachScreenEachSource = chkEachScreenEachSource.Checked;
+            }
+        }
+
+        private void chkNotStretch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initialized)
+            {
+                s.IsNotStretch = chkNotStretch.Checked;
             }
         }
     }
