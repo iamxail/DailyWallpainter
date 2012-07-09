@@ -288,26 +288,42 @@ namespace DailyWallpainter
                 }
                 Rectangle src = new Rectangle(srcX, srcY, srcWidth, srcHeight);
 
-                const int pickingPointNum = 5;
-                int R = 0;
-                int G = 0;
-                int B = 0;
-                for (int x = 0; x < pickingPointNum; x++)
+                //get edge color
+                Color bgColor;
+                try
                 {
-                    for (int y = 0; y < pickingPointNum; y++)
+                    const int pickingPointNum = 5;
+                    int R = 0;
+                    int G = 0;
+                    int B = 0;
+                    for (int x = 0; x < pickingPointNum; x++)
                     {
-                        var c = bitmap.Bitmap.GetPixel((srcWidth / pickingPointNum) * x + srcX, (srcHeight / pickingPointNum) * y + srcY);
+                        var c = bitmap.Bitmap.GetPixel(((srcWidth - 1) / pickingPointNum) * x + srcX, srcY);
+                        R += c.R;
+                        G += c.G;
+                        B += c.B;
+
+                        c = bitmap.Bitmap.GetPixel(((srcWidth - 1) / pickingPointNum) * x + srcX, srcY + srcHeight - 1);
                         R += c.R;
                         G += c.G;
                         B += c.B;
                     }
-                }
-                R /= pickingPointNum;
-                G /= pickingPointNum;
-                B /= pickingPointNum;
-                Color bgColor;
-                try
-                {
+                    for (int y = 1; y < pickingPointNum - 1; y++)
+                    {
+                        var c = bitmap.Bitmap.GetPixel(srcX, ((srcHeight - 1) / pickingPointNum) * y + srcY);
+                        R += c.R;
+                        G += c.G;
+                        B += c.B;
+
+                        c = bitmap.Bitmap.GetPixel(srcX + srcWidth - 1, ((srcHeight - 1) / pickingPointNum) * y + srcY);
+                        R += c.R;
+                        G += c.G;
+                        B += c.B;
+                    }
+                    R /= pickingPointNum * 4 - 4; //2n + 2*(n - 2)
+                    G /= pickingPointNum * 4 - 4;
+                    B /= pickingPointNum * 4 - 4;
+                
                     bgColor = Color.FromArgb(R, G, B);
                 }
                 catch
