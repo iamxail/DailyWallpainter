@@ -42,6 +42,7 @@
             this.rdoMultiScreenEach = new System.Windows.Forms.RadioButton();
             this.rdoMultiScreenStrectch = new System.Windows.Forms.RadioButton();
             this.chkSilentUpdate = new System.Windows.Forms.CheckBox();
+            this.chkEachScreenEachSource = new System.Windows.Forms.CheckBox();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
@@ -52,7 +53,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.SystemColors.Control;
             this.panel2.Controls.Add(this.btnClose);
-            this.panel2.Location = new System.Drawing.Point(-2, 277);
+            this.panel2.Location = new System.Drawing.Point(-2, 305);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(543, 100);
             this.panel2.TabIndex = 7;
@@ -74,7 +75,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel1.Location = new System.Drawing.Point(-5, 276);
+            this.panel1.Location = new System.Drawing.Point(-5, 304);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(546, 1);
             this.panel1.TabIndex = 6;
@@ -137,13 +138,14 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.chkEachScreenEachSource);
             this.panel3.Controls.Add(this.chkMultiScreenStretchCheckRatio);
             this.panel3.Controls.Add(this.rdoMultiScreenEach);
             this.panel3.Controls.Add(this.lblMSDesc);
             this.panel3.Controls.Add(this.rdoMultiScreenStrectch);
             this.panel3.Location = new System.Drawing.Point(-2, 124);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(543, 100);
+            this.panel3.Size = new System.Drawing.Size(543, 130);
             this.panel3.TabIndex = 5;
             // 
             // chkMultiScreenStretchCheckRatio
@@ -188,7 +190,7 @@
             this.chkSilentUpdate.AutoSize = true;
             this.chkSilentUpdate.Checked = true;
             this.chkSilentUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSilentUpdate.Location = new System.Drawing.Point(18, 239);
+            this.chkSilentUpdate.Location = new System.Drawing.Point(18, 260);
             this.chkSilentUpdate.Name = "chkSilentUpdate";
             this.chkSilentUpdate.Size = new System.Drawing.Size(180, 16);
             this.chkSilentUpdate.TabIndex = 8;
@@ -196,12 +198,25 @@
             this.chkSilentUpdate.UseVisualStyleBackColor = true;
             this.chkSilentUpdate.CheckedChanged += new System.EventHandler(this.chkSilentUpdate_CheckedChanged);
             // 
+            // chkEachScreenEachSource
+            // 
+            this.chkEachScreenEachSource.AutoSize = true;
+            this.chkEachScreenEachSource.Checked = true;
+            this.chkEachScreenEachSource.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkEachScreenEachSource.Location = new System.Drawing.Point(46, 88);
+            this.chkEachScreenEachSource.Name = "chkEachScreenEachSource";
+            this.chkEachScreenEachSource.Size = new System.Drawing.Size(260, 16);
+            this.chkEachScreenEachSource.TabIndex = 4;
+            this.chkEachScreenEachSource.Text = "각 스크린의 배경화면을 다르게 설정합니다.";
+            this.chkEachScreenEachSource.UseVisualStyleBackColor = true;
+            this.chkEachScreenEachSource.CheckedChanged += new System.EventHandler(this.chkEachScreenEachSource_CheckedChanged);
+            // 
             // frmAddtnlOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(529, 324);
+            this.ClientSize = new System.Drawing.Size(529, 352);
             this.Controls.Add(this.chkSilentUpdate);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.lblDescRL2);
@@ -241,5 +256,6 @@
         private System.Windows.Forms.RadioButton rdoMultiScreenEach;
         private System.Windows.Forms.RadioButton rdoMultiScreenStrectch;
         private System.Windows.Forms.CheckBox chkSilentUpdate;
+        private System.Windows.Forms.CheckBox chkEachScreenEachSource;
     }
 }
