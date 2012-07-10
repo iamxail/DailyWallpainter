@@ -336,7 +336,7 @@ namespace DailyWallpainter
         {
             get
             {
-                return GetBoolean("IsNotStretch", true);
+                return GetBoolean("IsNotStretch", false);
             }
             set
             {

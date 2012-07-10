@@ -38,12 +38,12 @@
             this.lblDescRL2 = new System.Windows.Forms.Label();
             this.lblMSDesc = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.chkNotStretch = new System.Windows.Forms.CheckBox();
             this.chkEachScreenEachSource = new System.Windows.Forms.CheckBox();
             this.chkMultiScreenStretchCheckRatio = new System.Windows.Forms.CheckBox();
             this.rdoMultiScreenEach = new System.Windows.Forms.RadioButton();
             this.rdoMultiScreenStrectch = new System.Windows.Forms.RadioButton();
             this.chkSilentUpdate = new System.Windows.Forms.CheckBox();
-            this.chkNotStretch = new System.Windows.Forms.CheckBox();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
@@ -131,7 +131,7 @@
             // lblMSDesc
             // 
             this.lblMSDesc.AutoSize = true;
-            this.lblMSDesc.Location = new System.Drawing.Point(18, 0);
+            this.lblMSDesc.Location = new System.Drawing.Point(16, 0);
             this.lblMSDesc.Name = "lblMSDesc";
             this.lblMSDesc.Size = new System.Drawing.Size(95, 15);
             this.lblMSDesc.TabIndex = 0;
@@ -149,6 +149,17 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(543, 147);
             this.panel3.TabIndex = 5;
+            // 
+            // chkNotStretch
+            // 
+            this.chkNotStretch.AutoSize = true;
+            this.chkNotStretch.Location = new System.Drawing.Point(46, 124);
+            this.chkNotStretch.Name = "chkNotStretch";
+            this.chkNotStretch.Size = new System.Drawing.Size(301, 19);
+            this.chkNotStretch.TabIndex = 5;
+            this.chkNotStretch.Text = "스크린 해상도보다 작은 이미지를 늘리지 않습니다.";
+            this.chkNotStretch.UseVisualStyleBackColor = true;
+            this.chkNotStretch.CheckedChanged += new System.EventHandler(this.chkNotStretch_CheckedChanged);
             // 
             // chkEachScreenEachSource
             // 
@@ -212,17 +223,6 @@
             this.chkSilentUpdate.Text = "자동으로 최신 버전 업데이트";
             this.chkSilentUpdate.UseVisualStyleBackColor = true;
             this.chkSilentUpdate.CheckedChanged += new System.EventHandler(this.chkSilentUpdate_CheckedChanged);
-            // 
-            // chkNotStretch
-            // 
-            this.chkNotStretch.AutoSize = true;
-            this.chkNotStretch.Location = new System.Drawing.Point(46, 124);
-            this.chkNotStretch.Name = "chkNotStretch";
-            this.chkNotStretch.Size = new System.Drawing.Size(301, 19);
-            this.chkNotStretch.TabIndex = 5;
-            this.chkNotStretch.Text = "스크린 해상도보다 작은 이미지를 늘리지 않습니다.";
-            this.chkNotStretch.UseVisualStyleBackColor = true;
-            this.chkNotStretch.CheckedChanged += new System.EventHandler(this.chkNotStretch_CheckedChanged);
             // 
             // frmAddtnlOptions
             // 

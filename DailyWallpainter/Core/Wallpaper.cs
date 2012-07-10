@@ -238,11 +238,8 @@ namespace DailyWallpainter
             gDesktop.Dispose();
             gDesktop = null;
 
-            if (bitmapsCount > 0)
-            {
-                string fullPath = desktop.SafeSave(path, filename, true);
-                Wallpaper.Change(fullPath);
-            }
+            string fullPath = desktop.SafeSave(path, filename, true);
+            Wallpaper.Change(fullPath);
         }
 
         private void DrawBitmapToDesktop(SourceBitmap bitmap)
@@ -255,36 +252,36 @@ namespace DailyWallpainter
 
         private void DrawBitmapToDesktop(SourceBitmap bitmap, int screenNumber)
         {
-            Rectangle dest = allScreen.AllScreens[screenNumber].AdjustedBounds;
+            Rectangle screen = allScreen.AllScreens[screenNumber].AdjustedBounds;
             int bitmapWidth = bitmap.Bitmap.Width;
             int bitmapHeight = bitmap.Bitmap.Height;
 
             if (s.IsNotStretch
-                && (bitmapWidth < dest.Width || bitmapHeight < dest.Height))
+                && (bitmapWidth < screen.Width || bitmapHeight < screen.Height))
             {
                 int srcX;
                 int srcWidth;
                 int srcY;
                 int srcHeight;
-                if (bitmapWidth <= dest.Width)
+                if (bitmapWidth <= screen.Width)
                 {
                     srcX = 0;
                     srcWidth = bitmapWidth;
                 }
                 else //bitmapWidth > bounds.Width
                 {
-                    srcX = (bitmapWidth - dest.Width) / 2;
-                    srcWidth = dest.Width;
+                    srcX = (bitmapWidth - screen.Width) / 2;
+                    srcWidth = screen.Width;
                 }
-                if (bitmapHeight <= dest.Height)
+                if (bitmapHeight <= screen.Height)
                 {
                     srcY = 0;
                     srcHeight = bitmapHeight;
                 }
                 else //bitmapHeight > bounds.Height
                 {
-                    srcY = (bitmapHeight - dest.Height) / 2;
-                    srcHeight = dest.Height;
+                    srcY = (bitmapHeight - screen.Height) / 2;
+                    srcHeight = screen.Height;
                 }
                 Rectangle src = new Rectangle(srcX, srcY, srcWidth, srcHeight);
 
@@ -333,14 +330,14 @@ namespace DailyWallpainter
 
                 using (var brush = new SolidBrush(bgColor))
                 {
-                    gDesktop.FillRectangle(brush, src);
+                    gDesktop.FillRectangle(brush, screen);
                 }
 
-                gDesktop.DrawImage(bitmap.Bitmap, dest, src, GraphicsUnit.Pixel);
+                gDesktop.DrawImage(bitmap.Bitmap, (screen.Width - srcWidth) / 2 + screen.X, (screen.Height - srcHeight) / 2 + screen.Y, src, GraphicsUnit.Pixel);
             }
             else
             {
-                gDesktop.DrawImageFitOutside(bitmap.Bitmap, dest);
+                gDesktop.DrawImageFitOutside(bitmap.Bitmap, screen);
             }
 
             bitmap.Save();
