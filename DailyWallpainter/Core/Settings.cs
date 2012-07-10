@@ -83,6 +83,10 @@ namespace DailyWallpainter
 
                 case "1.4.0.0":
                     //do nothing
+                    goto case "1.5.0.0";
+
+                case "1.5.0.0":
+                    FileUnblocker.Unblock(Application.ExecutablePath);
                     break;
 
                 default: //maybe settings of higher version is detected
