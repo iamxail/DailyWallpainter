@@ -56,10 +56,16 @@ namespace DailyWallpainter
                 ShowSettings();
             }
 
+            SingleInstanceProgram.Instance.AnotherProcessLaunched += new EventHandler<EventArgs>(Instance_AnotherProcessLaunched);
+
             updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
+#if DEBUG
+            //do nothing
+#else
             updater.CheckCompleted += new CheckCompletedEventHandler(updater_CheckCompleted);
             updater.UpdateCompleted += new UpdateCompletedEventHandler(updater_UpdateCompleted);
             updater.CheckAsync();
+#endif
 
             tmrDownload = new System.Timers.Timer();
             tmrDownload.Interval = 5000;
@@ -73,6 +79,14 @@ namespace DailyWallpainter
         {
             //http://stackoverflow.com/questions/1067844/issue-with-notifyicon-not-dissappearing-on-winforms-app
             //this event can be raised several times. - it can cause NullReferenceException
+
+            try
+            {
+                SingleInstanceProgram.Instance.AnotherProcessLaunched -= Instance_AnotherProcessLaunched;
+            }
+            catch
+            {
+            }
 
             try
             {
@@ -97,6 +111,11 @@ namespace DailyWallpainter
             catch
             {
             }
+        }
+
+        private void Instance_AnotherProcessLaunched(object sender, EventArgs e)
+        {
+            ShowSettings();
         }
 
         private bool IsNeededToShowSettings()
@@ -169,8 +188,12 @@ namespace DailyWallpainter
         {
             get
             {
+#if DEBUG
+                return false;
+#else
                 return updater.IsNewVersionAvailable
                     && updater.LatestVersion != s.LastestVersionInformed;
+#endif
             }
         }
 
@@ -298,31 +321,95 @@ namespace DailyWallpainter
                 }
 
                 var sources = s.Sources.GetEnabledSources();
+                Wallpaper wallpaper = null;
+                bool isAppBgSaved = false;
 
-                foreach (var source in sources)
+                try
                 {
-                    try
+                    using (var sourcesEnumerator = sources.GetEnumerator())
                     {
-                        using (var bmpDownload = source.GetBitmap())
+                        if (sourcesEnumerator.MoveNext()) // enumerator created or resetted, need MoveNext() before get Current
                         {
-                            if (bmpDownload != null)
-                            {
-                                bmpDownload.Save();
+                            bool tryForceGrab = false;
 
-                                using (var wallpaper = new Wallpaper(bmpDownload))
+                            while (true)
+                            {
+                                try
                                 {
-                                    wallpaper.SetToDesktop();
+                                    var source = sourcesEnumerator.Current;
+                                    var bmpDownload = source.GetBitmap(tryForceGrab);
+                                    if (bmpDownload != null)
+                                    {
+                                        if (wallpaper == null)
+                                        {
+                                            wallpaper = new Wallpaper();
+                                        }
+
+                                        wallpaper.AddBitmap(bmpDownload);
+
+                                        if (isAppBgSaved == false)
+                                        {
+                                            try
+                                            {
+                                                var appBg = bmpDownload.Bitmap.Crop(0, 0, 100, 165);
+                                                appBg.SafeSave(Program.AppData, @"appbg.bmp", true);
+                                            }
+                                            catch
+                                            {
+                                            }
+
+                                            isAppBgSaved = true;
+                                        }
+                                    }
+                                }
+                                catch
+                                {
                                 }
 
-                                var appBg = bmpDownload.Bitmap.Crop(0, 0, 100, 165);
-                                appBg.SafeSave(Program.AppData, @"appbg.bmp", true);
+                                try
+                                {
+                                    if (wallpaper != null
+                                        && wallpaper.CanAddAnotherBitmap == false)
+                                    {
+                                        break;
+                                    }
+                                    else if (sourcesEnumerator.MoveNext() == false)
+                                    {
+                                        if (tryForceGrab == false
+                                            && MultiScreenInfo.Instance.IsChanged)
+                                        {
+                                            tryForceGrab = true;
 
-                                break;
+                                            sourcesEnumerator.Reset();
+                                            if (sourcesEnumerator.MoveNext() == false) //need MoveNext() after Reset()
+                                            {
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    break;
+                                }
+                            }
+
+                            if (wallpaper != null)
+                            {
+                                wallpaper.SetToDesktop();
                             }
                         }
                     }
-                    catch
+                }
+                finally
+                {
+                    if (wallpaper != null)
                     {
+                        wallpaper.Dispose();
                     }
                 }
             }

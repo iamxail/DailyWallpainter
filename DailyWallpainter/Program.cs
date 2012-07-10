@@ -14,29 +14,25 @@ namespace DailyWallpainter
         [STAThread]
         static void Main()
         {
-            if (ArgumentExists("/forcestart") == false)
+            try
             {
-                if (SingleInstanceProgram.IsSingleInstaced() == false)
+                if (ArgumentExists("/forcestart") == false
+                    && SingleInstanceProgram.Instance.IsSingleInstanced == false)
                 {
-                    while (SingleInstanceProgram.IsSingleInstaced() == false)
-                    {
-                        if (MessageBox.Show("Daily Wallpainter가 이미 실행 중입니다.\r\n\r\n계속 진행하려면 실행 중인 Daily Wallpainter를 종료한 후 재시도하십시오.", Program.Name, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-                            == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                Context = new MainApplicationContext();
+
+                Application.Run(Context);
             }
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            Context = new MainApplicationContext();
-
-            Application.Run(Context);
-
-            SingleInstanceProgram.Release();
+            finally
+            {
+                SingleInstanceProgram.Instance.Release();
+            }
         }
 
         public static MainApplicationContext Context { get; private set; }

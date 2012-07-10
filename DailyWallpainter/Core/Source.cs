@@ -73,7 +73,7 @@ namespace DailyWallpainter
         public string RegExp { get { return regexpStr; } }
         public string Replacement { get { return replacement; } }
         public bool Enabled { get { return enabled; } }
-        public string LastBitmapUrl { get { return lastBitmapUrl; } }
+        public string LastBitmapUrl { get { return lastBitmapUrl; } set { lastBitmapUrl = value; } }
 
         public override string ToString()
         {
@@ -83,6 +83,7 @@ namespace DailyWallpainter
         public SourceBitmap GetBitmap(bool force = false)
         {
             byte[] result = null;
+            string bitmapUrl = "";
 
             try
             {
@@ -93,14 +94,12 @@ namespace DailyWallpainter
                     var match = regexp.Match(html);
                     if (match.Success)
                     {
-                        string bitmapUrl = match.Result(replacement);
+                        bitmapUrl = match.Result(replacement);
 
                         if (force ||
                             (lastBitmapUrl != bitmapUrl))
                         {
                             result = client.DownloadData(bitmapUrl);
-
-                            lastBitmapUrl = bitmapUrl;
                         }
                     }
                 }
@@ -112,7 +111,7 @@ namespace DailyWallpainter
 
             if (result != null)
             {
-                return new SourceBitmap(this, result);
+                return new SourceBitmap(this, bitmapUrl, result);
             }
             else
             {

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using DailyWallpainter.UI;
 using System.Threading;
+using DailyWallpainter.Helpers;
 
 namespace DailyWallpainter.Updater
 {
@@ -87,6 +88,14 @@ namespace DailyWallpainter.Updater
                     args += " /winstart";
                 }
 
+                try
+                {
+                    FileUnblocker.Unblock(updatedExePath);
+                }
+                catch
+                {
+                }
+
                 Process.Start(updatedExePath, args);
 
                 Application.Exit();
@@ -141,9 +150,17 @@ namespace DailyWallpainter.Updater
 
         public abstract event CheckCompletedEventHandler CheckCompleted;
 
-        public abstract void CheckAsync();
+        public void CheckAsync()
+        {
+            CheckAsync(null);
+        }
+
+        public void UpdateAsync(bool silent)
+        {
+            UpdateAsync(silent, null);
+        }
+
         public abstract void CheckAsync(object userState);
-        public abstract void UpdateAsync(bool silent);
         public abstract void UpdateAsync(bool silent, object userState);
         public abstract bool IsChecked { get; protected set; }
         public abstract bool IsNewVersionAvailable { get; protected set; }

@@ -8,12 +8,29 @@ namespace DailyWallpainter.Helpers
 {
     public class MultiScreenInfo
     {
+        private static readonly MultiScreenInfo instance = new MultiScreenInfo();
+
+        static MultiScreenInfo()
+        {
+            //do nothing
+        }
+
+        public static MultiScreenInfo Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
+        public bool IsChanged { get; protected set; }
+
         protected Rectangle allScreen;
         protected Rectangle allScreenOffsetted;
         protected Point allScreenOffset;
         protected SingleScreenInfo[] scrs;
 
-        public MultiScreenInfo()
+        private MultiScreenInfo()
         {
             allScreen = Rectangle.Empty;
             foreach (var scr in Screen.AllScreens)
@@ -32,6 +49,19 @@ namespace DailyWallpainter.Helpers
                 lstScrs.Add(new SingleScreenInfo(scr, allScreenOffset));
             }
             scrs = lstScrs.ToArray();
+
+            var toStr = this.ToString();
+            var s = Settings.Instance;
+            if (toStr != s.ScreensRects)
+            {
+                s.ScreensRects = toStr;
+
+                IsChanged = true;
+            }
+            else
+            {
+                IsChanged = false;
+            }
         }
 
         public bool IsPreferredToStretch(Size imageSize)
@@ -95,6 +125,17 @@ namespace DailyWallpainter.Helpers
                 return scrs;
             }
         }
+
+        public override string ToString()
+        {
+            string result = "";
+            foreach (var scr in scrs)
+            {
+                result += scr.ToString() + "/";
+            }
+
+            return result.Substring(0, result.Length - 1);
+        }
     }
 
     public class SingleScreenInfo
@@ -124,6 +165,11 @@ namespace DailyWallpainter.Helpers
             {
                 return offsettedBounds;
             }
+        }
+
+        public override string ToString()
+        {
+            return bounds.ToString();
         }
     }
 }

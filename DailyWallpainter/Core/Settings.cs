@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Drawing;
+using DailyWallpainter.Helpers;
 
 namespace DailyWallpainter
 {
@@ -36,7 +37,7 @@ namespace DailyWallpainter
         protected SourceCollection sources;
         protected bool initial;
 
-        public Settings()
+        private Settings()
         {
             string settingsVersion = Get("");
             string programVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -82,6 +83,10 @@ namespace DailyWallpainter
 
                 case "1.4.0.0":
                     //do nothing
+                    goto case "1.5.0.0";
+
+                case "1.5.0.0":
+                    FileUnblocker.Unblock(Application.ExecutablePath);
                     break;
 
                 default: //maybe settings of higher version is detected
@@ -281,6 +286,65 @@ namespace DailyWallpainter
             set
             {
                 Set("IsSilentUpdate", value.ToString());
+            }
+        }
+
+        public bool IsEachScreenEachSource
+        {
+            get
+            {
+                return GetBoolean("IsEachScreenEachSource", true);
+            }
+            set
+            {
+                Set("IsEachScreenEachSource", value.ToString());
+            }
+        }
+
+        public string ScreensRects
+        {
+            get
+            {
+                return Get("ScreensRects");
+            }
+            set
+            {
+                Set("ScreensRects", value.ToString());
+            }
+        }
+
+        public int LastUpdatedScreen
+        {
+            get
+            {
+                var rstr = Get("LastUpdatedScreen");
+                int r;
+
+                if (rstr == ""
+                    || int.TryParse(rstr, out r) == false)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return r;
+                }
+            }
+            set
+            {
+                Set("LastUpdatedScreen", value.ToString());
+            }
+        }
+
+        public bool IsNotStretch
+        {
+            get
+            {
+                return GetBoolean("IsNotStretch", false);
+            }
+            set
+            {
+                Set("IsNotStretch", value.ToString());
             }
         }
 
