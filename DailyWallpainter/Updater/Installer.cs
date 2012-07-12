@@ -89,10 +89,7 @@ namespace DailyWallpainter.Updater
                     argsStr = string.Join(" ", args, 1, args.Length - 1);
                 }
 
-                if (Settings.Instance.RunOnStartup)
-                {
-                    argsStr += " /setstartup";
-                }
+                argsStr += " /setstartup";
 
                 Process.Start(installedExePath, argsStr + " /forcestart");
             }
