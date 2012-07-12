@@ -87,6 +87,19 @@ namespace DailyWallpainter
 
                 case "1.5.0.0":
                     FileUnblocker.Unblock(Application.ExecutablePath);
+                    goto case "1.6.0.0";
+
+                case "1.6.0.0":
+                    var nasaSource = Sources[2];
+                    if (nasaSource.Url == @"http://apod.nasa.gov/apod/"
+                        && nasaSource.RegExp == "<a href=\"image/(.*?)\">")
+                    {
+                        Sources.Replace(2, new Source("NASA - Astronomy Picture of the Day",
+                                                      @"http://apod.nasa.gov/apod/",
+                                                      "<a href=\"image/(.*?)\"",
+                                                      "http://apod.nasa.gov/apod/image/$1"
+                                                      , nasaSource.Enabled, nasaSource.LastBitmapUrl));
+                    }
                     break;
 
                 default: //maybe settings of higher version is detected
