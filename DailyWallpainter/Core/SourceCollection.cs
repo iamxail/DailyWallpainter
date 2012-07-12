@@ -47,7 +47,7 @@ namespace DailyWallpainter
                         false, ""),
                     new Source("NASA - Astronomy Picture of the Day",
                         @"http://apod.nasa.gov/apod/",
-                        "<a href=\"image/(.*?)\">",
+                        "<a href=\"image/(.*?)\"",
                         "http://apod.nasa.gov/apod/image/$1")
                     });
             }

@@ -31,50 +31,29 @@ namespace DailyWallpainter
 
             try
             {
-                try
+                desktop = new Bitmap(allScreen.VirtualDesktop.Width, allScreen.VirtualDesktop.Height);
+                gDesktop = Graphics.FromImage(desktop);
+                gDesktop.SetHighQuality();
+                needFullRedraw = true;
+
+                if (allScreen.IsChanged == false)
                 {
-                    if (allScreen.IsChanged == false)
+                    var currentPath = GetCurrentPath();
+                    var expectedPath = SafeFilename.Convert(s.SaveFolder, "Current Wallpaper.bmp", true);
+
+                    if (currentPath == expectedPath)
                     {
-                        var currentPath = GetCurrentPath();
-                        var expectedPath = SafeFilename.Convert(s.SaveFolder, "Current Wallpaper.bmp", true);
-
-                        if (currentPath == expectedPath)
+                        using (var currentDesktop = new Bitmap(currentPath))
                         {
-                            desktop = new Bitmap(currentPath);
-
                             //not needed?
-                            if (desktop.Size != allScreen.VirtualDesktop.Size)
+                            if (currentDesktop.Size == allScreen.VirtualDesktop.Size)
                             {
-                                desktop.Dispose();
-                                desktop = null;
+                                gDesktop.DrawImageUnscaled(currentDesktop, 0, 0);
+                                needFullRedraw = false;
                             }
                         }
                     }
                 }
-                catch
-                {
-                    if (desktop != null)
-                    {
-                        desktop.Dispose();
-                        desktop = null;
-                    }
-                }
-                finally
-                {
-                    if (desktop == null)
-                    {
-                        desktop = new Bitmap(allScreen.VirtualDesktop.Width, allScreen.VirtualDesktop.Height);
-
-                        needFullRedraw = true;
-                    }
-                    else
-                    {
-                        needFullRedraw = false;
-                    }
-                }
-
-                gDesktop = Graphics.FromImage(desktop);
-                gDesktop.SetHighQuality();
             }
             catch
             {
