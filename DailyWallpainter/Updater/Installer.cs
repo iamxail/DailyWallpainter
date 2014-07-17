@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using DailyWallpainter.UI;
 using System.IO;
 using System.Diagnostics;
+using DailyWallpainter.Helpers;
 
 namespace DailyWallpainter.Updater
 {
@@ -19,7 +20,11 @@ namespace DailyWallpainter.Updater
 
         public bool CheckNeedInstall()
         {
+#if DEBUG
+            return false;
+#else
             return !Application.ExecutablePath.ToLower().StartsWith(Program.AppData.ToLower());
+#endif
         }
 
         public void InstallAsync()
@@ -70,6 +75,7 @@ namespace DailyWallpainter.Updater
                     }
 
                     File.Copy(Application.ExecutablePath, installedExePath, true);
+                    FileUnblocker.Unblock(installedExePath);
                 }
                 catch
                 {
@@ -83,10 +89,7 @@ namespace DailyWallpainter.Updater
                     argsStr = string.Join(" ", args, 1, args.Length - 1);
                 }
 
-                if (Settings.Instance.RunOnStartup)
-                {
-                    argsStr += " /setstartup";
-                }
+                argsStr += " /setstartup";
 
                 Process.Start(installedExePath, argsStr + " /forcestart");
             }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Drawing;
+using DailyWallpainter.Helpers;
 
 namespace DailyWallpainter
 {
@@ -36,7 +37,7 @@ namespace DailyWallpainter
         protected SourceCollection sources;
         protected bool initial;
 
-        public Settings()
+        private Settings()
         {
             string settingsVersion = Get("");
             string programVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -78,6 +79,48 @@ namespace DailyWallpainter
 
                 case "1.3.0.0":
                     //do nothing
+                    goto case "1.4.0.0";
+
+                case "1.4.0.0":
+                    //do nothing
+                    goto case "1.5.0.0";
+
+                case "1.5.0.0":
+                    FileUnblocker.Unblock(Application.ExecutablePath);
+                    goto case "1.6.0.0";
+
+                case "1.6.0.0":
+                    var nasaSource = Sources[2];
+                    if (nasaSource.Url == @"http://apod.nasa.gov/apod/"
+                        && nasaSource.RegExp == "<a href=\"image/(.*?)\">")
+                    {
+                        Sources.Replace(2, new Source("NASA - Astronomy Picture of the Day",
+                                                      @"http://apod.nasa.gov/apod/",
+                                                      "<a href=\"image/(.*?)\"",
+                                                      "http://apod.nasa.gov/apod/image/$1"
+                                                      , nasaSource.Enabled, nasaSource.LastBitmapUrl));
+                    }
+                    goto case "1.7.0.0";
+
+                case "1.7.0.0":
+                    //replace to new "National Geographic - Photo of the Day" source
+                    var ngSource = Sources[0];
+                    var ngUrl = @"http://photography.nationalgeographic.com/photography/photo-of-the-day/";
+                    if (ngSource.Url == ngUrl
+                        && ngSource.RegExp == "class=\"primary_photo\"(?>\\r\\n|[\\r\\n]|.)*?<div class=\"download_link\"><a href=\"(.*?)\"|title=\"Go to the previous Photo of the Day\">(?>\\r\\n|[\\r\\n]|.)*?<img src=\"(.*?)\"")
+                    {
+                        Sources.Replace(0, new Source("National Geographic - Photo of the Day",
+                                                      @"http://photography.nationalgeographic.com/photography/photo-of-the-day/",
+                                                      "<div class=\"primary_photo\">[\\s\\S]*?<img src=\"(.*?)\"",
+                                                      "http:$1"));
+                    }
+                    //remove "National Geographic - Photo of the Day (High Quality Only, Not Daily)"
+                    ngSource = Sources[1];
+                    if (ngSource.Url == ngUrl
+                        && ngSource.RegExp == "<div class=\"download_link\"><a href=\"(.*?)\"")
+                    {
+                        Sources.RemoveAt(1);
+                    }
                     break;
 
                 default: //maybe settings of higher version is detected
@@ -277,6 +320,65 @@ namespace DailyWallpainter
             set
             {
                 Set("IsSilentUpdate", value.ToString());
+            }
+        }
+
+        public bool IsEachScreenEachSource
+        {
+            get
+            {
+                return GetBoolean("IsEachScreenEachSource", true);
+            }
+            set
+            {
+                Set("IsEachScreenEachSource", value.ToString());
+            }
+        }
+
+        public string ScreensRects
+        {
+            get
+            {
+                return Get("ScreensRects");
+            }
+            set
+            {
+                Set("ScreensRects", value.ToString());
+            }
+        }
+
+        public int LastUpdatedScreen
+        {
+            get
+            {
+                var rstr = Get("LastUpdatedScreen");
+                int r;
+
+                if (rstr == ""
+                    || int.TryParse(rstr, out r) == false)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return r;
+                }
+            }
+            set
+            {
+                Set("LastUpdatedScreen", value.ToString());
+            }
+        }
+
+        public bool IsNotStretch
+        {
+            get
+            {
+                return GetBoolean("IsNotStretch", false);
+            }
+            set
+            {
+                Set("IsNotStretch", value.ToString());
             }
         }
 

@@ -9,13 +9,15 @@ namespace DailyWallpainter
 {
     public class SourceBitmap : IDisposable
     {
+        public string Url { get; protected set; }
+
         protected byte[] bitmapData;
         protected MemoryStream ms;
         protected Bitmap bitmap;
         protected Source parent;
         protected Settings s;
 
-        internal SourceBitmap(Source from, byte[] bitmapBytes)
+        internal SourceBitmap(Source from, string url, byte[] bitmapBytes)
         {
             try
             {
@@ -24,6 +26,7 @@ namespace DailyWallpainter
                 bitmap = new Bitmap(ms);
                 s = Settings.Instance;
                 parent = from;
+                Url = url;
             }
             catch
             {
@@ -109,9 +112,20 @@ namespace DailyWallpainter
 
         public void Save(string directory)
         {
-            string filename = parent.Name + " at " + string.Format("{0:yyyy-MM-dd}", DateTime.Now) + GetBitmapExtension(bitmapData);
+            try
+            {
+                string filename = parent.Name + " at " + string.Format("{0:yyyy-MM-dd}", DateTime.Now) + GetBitmapExtension(bitmapData);
 
-            File.WriteAllBytes(SafeFilename.Convert(directory, filename), bitmapData);
+                File.WriteAllBytes(SafeFilename.Convert(directory, filename), bitmapData);
+            }
+            catch
+            {
+            }
+        }
+
+        public void Apply()
+        {
+            parent.LastBitmapUrl = Url;
         }
 
         public bool CheckResolutionLowerLimit()
@@ -124,9 +138,10 @@ namespace DailyWallpainter
 
         public bool CheckStretchForMultiScreen()
         {
-            var allScreen = new MultiScreenInfo();
+            var allScreen = MultiScreenInfo.Instance;
 
             return s.IsStretchForMultiScreen
+                && allScreen.AllScreens.Length > 1
                 && (s.IsCheckRatioWhenStretch == false || allScreen.IsPreferredToStretch(bitmap.Size));
         }
 

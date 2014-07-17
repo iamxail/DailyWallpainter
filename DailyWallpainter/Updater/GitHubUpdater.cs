@@ -82,11 +82,6 @@ namespace DailyWallpainter.Updater
             }
         }
 
-        public override void CheckAsync()
-        {
-            CheckAsync(null);
-        }
-
         public override void CheckAsync(object userState)
         {
             var client = new WebClient();
@@ -132,11 +127,6 @@ namespace DailyWallpainter.Updater
         protected virtual void OnCheckCompleted(object userState, Exception ex)
         {
             CheckCompleted(this, new CheckCompletedEventArgs(userState, ex));
-        }
-
-        public override void UpdateAsync(bool silent)
-        {
-            UpdateAsync(silent, null);
         }
 
         public override void UpdateAsync(bool silent, object userState)
