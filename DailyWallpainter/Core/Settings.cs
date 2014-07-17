@@ -100,6 +100,27 @@ namespace DailyWallpainter
                                                       "http://apod.nasa.gov/apod/image/$1"
                                                       , nasaSource.Enabled, nasaSource.LastBitmapUrl));
                     }
+                    goto case "1.7.0.0";
+
+                case "1.7.0.0":
+                    //replace to new "National Geographic - Photo of the Day" source
+                    var ngSource = Sources[0];
+                    var ngUrl = @"http://photography.nationalgeographic.com/photography/photo-of-the-day/";
+                    if (ngSource.Url == ngUrl
+                        && ngSource.RegExp == "class=\"primary_photo\"(?>\\r\\n|[\\r\\n]|.)*?<div class=\"download_link\"><a href=\"(.*?)\"|title=\"Go to the previous Photo of the Day\">(?>\\r\\n|[\\r\\n]|.)*?<img src=\"(.*?)\"")
+                    {
+                        Sources.Replace(0, new Source("National Geographic - Photo of the Day",
+                                                      @"http://photography.nationalgeographic.com/photography/photo-of-the-day/",
+                                                      "<div class=\"primary_photo\">[\\s\\S]*?<img src=\"(.*?)\"",
+                                                      "http:$1"));
+                    }
+                    //remove "National Geographic - Photo of the Day (High Quality Only, Not Daily)"
+                    ngSource = Sources[1];
+                    if (ngSource.Url == ngUrl
+                        && ngSource.RegExp == "<div class=\"download_link\"><a href=\"(.*?)\"")
+                    {
+                        Sources.RemoveAt(1);
+                    }
                     break;
 
                 default: //maybe settings of higher version is detected
