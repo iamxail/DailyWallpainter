@@ -10,11 +10,10 @@ namespace DailyWallpainter.Updater
 {
     public class GitHubUpdater : Updater
     {
-        public GitHubUpdater(string username, string repoName, string filename)
+        public GitHubUpdater(string username, string repoName)
         {
             Username = username;
             RepositoryName = repoName;
-            Filename = filename;
 
             IsChecked = false;
             IsNewVersionAvailable = false;
@@ -23,7 +22,6 @@ namespace DailyWallpainter.Updater
 
         public string Username { get; protected set; }
         public string RepositoryName { get; protected set; }
-        public string Filename { get; protected set; }
         public override string LatestVersion { get; protected set; }
         public override bool IsNewVersionAvailable { get; protected set; }
         public override bool IsChecked { get; protected set; }
@@ -33,58 +31,52 @@ namespace DailyWallpainter.Updater
 
         private string GetRepoDownloadsUrl()
         {
-            return "https://api.github.com/repos/" + Username + "/" + RepositoryName + "/downloads";
+            return "https://api.github.com/repos/" + Username + "/" + RepositoryName + "/releases";
         }
 
         private void CheckInternal(string downloaded)
         {
-            try
+            Match latestItem = null;
+            Version latestItemVersion = null;
+            foreach (Match matchedItem in Regex.Matches(downloaded, "\"tag_name\"\\s*?:\\s*?\"([0-9.]+)\"[\\s\\S]*\"browser_download_url\"\\s*?:\\s*?\"([A-z0-9:.\\/]*?\\.\\1\\.exe)\""))
             {
-                var regexSplitter = new Regex("}[ .\r\n]*?,[ .\r\n]*?{");
-                var downloadsSplitted = regexSplitter.Split(downloaded);
+                var matchedItemVersion = new Version(matchedItem.Groups[1].Value);
 
-                var regexFilename = new Regex("\"name\" *?: *?\"" + Filename + "\"[ .\r\n]*[,}]", RegexOptions.IgnoreCase);
-                foreach (var download in downloadsSplitted)
+                if (latestItem == null)
                 {
-                    if (regexFilename.IsMatch(download))
+                    latestItem = matchedItem;
+                    latestItemVersion = matchedItemVersion;
+                }
+                else
+                {
+                    if (matchedItemVersion.CompareTo(latestItemVersion) > 0)
                     {
-                        var regexDesc = new Regex("\"description\" *?: *?\"(?:version|ver|v) ?([0-9]*\\.[0-9]*)", RegexOptions.IgnoreCase);
-                        var match = regexDesc.Match(download);
-
-                        if (match.Success)
-                        {
-                            LatestVersion = match.Groups[1].Value;
-                            IsNewVersionAvailable = (LatestVersion != Program.Version);
-
-                            var regexUrl = new Regex("\"html_url\" *?: *?\"(.*?)\"", RegexOptions.IgnoreCase);
-                            var matchUrl = regexUrl.Match(download);
-
-                            if (matchUrl.Success)
-                            {
-                                newExeUrl = matchUrl.Groups[1].Value;
-                            }
-
-                            break;
-                        }
+                        latestItem = matchedItem;
+                        latestItemVersion = matchedItemVersion;
                     }
                 }
             }
-            catch
+
+            if (latestItem != null
+                && latestItemVersion.CompareTo(new Version(LatestVersion)) > 0)
+            {
+                IsNewVersionAvailable = true;
+                LatestVersion = latestItemVersion.GetSimpleVersionString();
+                newExeUrl = latestItem.Groups[2].Value;
+            }
+            else
             {
                 IsNewVersionAvailable = false;
                 LatestVersion = Program.Version;
+            }
 
-                throw;
-            }
-            finally
-            {
-                IsChecked = true;
-            }
+            IsChecked = true;
         }
 
         public override void CheckAsync(object userState)
         {
             var client = new WebClient();
+            client.Headers["User-Agent"] = Program.SafeName;
             client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
             client.DownloadStringAsync(new Uri(GetRepoDownloadsUrl()), new object[] { client, userState });
         }

@@ -31,7 +31,7 @@ namespace DailyWallpainter.Updater
         {
             var work = new WorkingUI(cntx);
 
-            IUpdater updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
+            IUpdater updater = new GitHubUpdater("iamxail", Program.SafeName);
             updater.CheckCompleted += new CheckCompletedEventHandler(updater_CheckCompleted);
             updater.CheckAsync(new object[] { updater, work } );
         }

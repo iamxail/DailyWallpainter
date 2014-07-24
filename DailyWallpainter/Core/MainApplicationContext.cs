@@ -58,7 +58,7 @@ namespace DailyWallpainter
 
             SingleInstanceProgram.Instance.AnotherProcessLaunched += new EventHandler<EventArgs>(Instance_AnotherProcessLaunched);
 
-            updater = new GitHubUpdater("iamxail", Program.SafeName, Program.ExeName);
+            updater = new GitHubUpdater("iamxail", Program.SafeName);
 #if DEBUG
             //do nothing
 #else
