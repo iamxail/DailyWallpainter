@@ -36,23 +36,29 @@ namespace DailyWallpainter
                 gDesktop.SetHighQuality();
                 needFullRedraw = true;
 
-                if (allScreen.IsChanged == false)
+                try
                 {
-                    var currentPath = GetCurrentPath();
-                    var expectedPath = SafeFilename.Convert(s.SaveFolder, "Current Wallpaper.bmp", true);
-
-                    if (currentPath == expectedPath)
+                    if (allScreen.IsChanged == false)
                     {
-                        using (var currentDesktop = new Bitmap(currentPath))
+                        var currentPath = GetCurrentPath();
+                        var expectedPath = SafeFilename.Convert(s.SaveFolder, "Current Wallpaper.bmp", true);
+
+                        if (currentPath == expectedPath)
                         {
-                            //not needed?
-                            if (currentDesktop.Size == allScreen.VirtualDesktop.Size)
+                            using (var currentDesktop = new Bitmap(currentPath))
                             {
-                                gDesktop.DrawImageUnscaled(currentDesktop, 0, 0);
-                                needFullRedraw = false;
+                                //not needed?
+                                if (currentDesktop.Size == allScreen.VirtualDesktop.Size)
+                                {
+                                    gDesktop.DrawImageUnscaled(currentDesktop, 0, 0);
+                                    needFullRedraw = false;
+                                }
                             }
                         }
                     }
+                }
+                catch
+                {
                 }
             }
             catch

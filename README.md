@@ -32,6 +32,11 @@
 
 최근 변경 사항
 -
+### 1.8
+* National Geographics - Photo of the Day 소스가 작동하도록 변경되었습니다.
+* National Geographic - Photo of the Day (High Quality Only, Not Daily) 소스는 더 이상 제공되지 않습니다.
+* 자동 업데이트 기능을 수정하였습니다.
+
 ### 1.7
 * NASA - Astronomy Picture of the Day 소스가 작동하도록 변경되었습니다.
 * 배경 화면이 바뀌지 않는 버그를 수정하였습니다.
