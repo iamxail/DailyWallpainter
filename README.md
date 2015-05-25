@@ -9,7 +9,7 @@
 
 최신 버전 다운로드
 -
-[여기를 클릭해서 다운로드](https://github.com/downloads/iamxail/DailyWallpainter/DailyWallpainter.exe)
+[여기를 클릭해서 다운로드](https://github.com/iamxail/DailyWallpainter/releases)
 
 어떻게 사용하나요?
 -
