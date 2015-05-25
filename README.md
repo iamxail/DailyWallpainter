@@ -32,6 +32,9 @@
 
 최근 변경 사항
 -
+### 1.9
+* 인터넷 연결이 불안정할 시 기다렸다가 배경화면을 얻어오도록 하였습니다.
+
 ### 1.8
 * National Geographics - Photo of the Day 소스가 작동하도록 변경되었습니다.
 * National Geographic - Photo of the Day (High Quality Only, Not Daily) 소스는 더 이상 제공되지 않습니다.
