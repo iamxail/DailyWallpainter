@@ -312,9 +312,16 @@ namespace DailyWallpainter
                 return;
             }
 
+            tmrDownload.Stop();
+            if (InternetConnection.IsAvailable() == false)
+            {
+                tmrDownload.Interval = 5000;
+                tmrDownload.Start();
+                return;
+            }
+
             try
             {
-                tmrDownload.Stop();
                 if (tmrDownload.Interval != s.IntervalInMinute * 60000)
                 {
                     tmrDownload.Interval = s.IntervalInMinute * 60000;

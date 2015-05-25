@@ -50,6 +50,7 @@
     <Compile Include="Helpers\BitmapHelper.cs" />
     <Compile Include="Helpers\ExtensionMethodHack.cs" />
     <Compile Include="Helpers\FileUnblocker.cs" />
+    <Compile Include="Helpers\InternetConnection.cs" />
     <Compile Include="Helpers\SafeFilename.cs" />
     <Compile Include="Helpers\ScreenInfo.cs" />
     <Compile Include="Helpers\SingleInstanceProgram.cs" />
